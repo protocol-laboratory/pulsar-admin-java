@@ -23,7 +23,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class BrokerTests {
+public class BrokersTest {
     private static final EmbeddedPulsarServer SERVER = new EmbeddedPulsarServer();
 
     @BeforeAll
