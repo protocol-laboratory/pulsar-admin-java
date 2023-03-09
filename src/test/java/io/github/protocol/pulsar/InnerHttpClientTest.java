@@ -1,10 +1,7 @@
 package io.github.protocol.pulsar;
 
-import org.apache.commons.collections4.map.HashedMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
 
 public class InnerHttpClientTest {
 

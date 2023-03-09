@@ -19,20 +19,14 @@
 package io.github.protocol.pulsar;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class InnerHttpClient {
     private final Configuration conf;
@@ -40,8 +34,6 @@ public class InnerHttpClient {
     private final HttpClient client;
 
     private final String httpPrefix;
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public InnerHttpClient(Configuration conf) {
         this.conf = conf;
@@ -51,64 +43,65 @@ public class InnerHttpClient {
         this.httpPrefix = "http://" + conf.getHost() + ":" + conf.getPort();
     }
 
-    private URI getUri(String urlSuffix, String... params) {
-        return URI.create(this.httpPrefix + urlSuffix + mapToParams(params));
+    public HttpResponse<String> get(String url) throws IOException, InterruptedException {
+        return this.get(url, new String[0]);
     }
 
-    public HttpResponse<String> get(String urlSuffix, String... requestParams)
+    public HttpResponse<String> get(String url, String... requestParams)
             throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(getUri(urlSuffix, requestParams))
+                .uri(getUri(url, requestParams))
                 .GET()
                 .build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public HttpResponse<String> get(String urlSuffix) throws IOException, InterruptedException {
-        return this.get(urlSuffix);
+    public HttpResponse<String> post(String url, Object body, String... params)
+            throws IOException, InterruptedException {
+        return this.post(url, objectToString(body), params);
     }
 
-    public HttpResponse<String> post(String urlSuffix, String body, String... params)
+    public HttpResponse<String> post(String url, String body, String... params)
             throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(getUri(urlSuffix, params))
+                .uri(getUri(url, params))
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public HttpResponse<String> post(String urlSuffix, Object body, String... params) throws IOException, InterruptedException {
-        return this.post(urlSuffix, objectToString(body), params);
+    public HttpResponse<String> post(String url) throws IOException, InterruptedException {
+        return this.post(url, "");
     }
 
-    public HttpResponse<String> post(String urlSuffix) throws IOException, InterruptedException {
-        return this.post(urlSuffix, "");
+    public HttpResponse<String> put(String url) throws IOException, InterruptedException {
+        return this.put(url, "");
     }
 
-    public HttpResponse<String> put(String urlSuffix, String body, String... params)
+    public HttpResponse<String> put(String url, Object body, String... params) throws IOException, InterruptedException {
+        return this.put(url, objectToString(body), params);
+    }
+
+    public HttpResponse<String> put(String url, String body, String... params)
             throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(getUri(urlSuffix, params))
+                .uri(getUri(url, params))
                 .PUT(HttpRequest.BodyPublishers.ofString(body))
                 .build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public HttpResponse<String> put(String urlSuffix) throws IOException, InterruptedException {
-        return this.put(urlSuffix, "");
-    }
-
-    public HttpResponse<String> put(String urlSuffix, Object body, String... params) throws IOException, InterruptedException {
-        return this.put(urlSuffix, objectToString(body), params);
-    }
-
-    public HttpResponse<String> delete(String urlSuffix, String... requestParams)
+    public HttpResponse<String> delete(String url, String... requestParams)
             throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(getUri(urlSuffix, requestParams))
+                .uri(getUri(url, requestParams))
                 .DELETE()
                 .build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    private URI getUri(String url, String... params) {
+        return URI.create(this.httpPrefix + url + mapToParams(params));
     }
 
     static String mapToParams(String... requestParams) {
@@ -132,7 +125,7 @@ public class InnerHttpClient {
     }
 
     private String objectToString(Object obj) throws JsonProcessingException {
-        return obj == null ? "" : objectMapper.writeValueAsString(obj);
+        return obj == null ? "" : JacksonService.toJson(obj);
     }
 
     private static String encode(String value) {
