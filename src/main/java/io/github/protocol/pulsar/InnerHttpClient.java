@@ -78,7 +78,8 @@ public class InnerHttpClient {
         return this.put(url, "");
     }
 
-    public HttpResponse<String> put(String url, Object body, String... params) throws IOException, InterruptedException {
+    public HttpResponse<String> put(String url, Object body, String... params)
+            throws IOException, InterruptedException {
         return this.put(url, objectToString(body), params);
     }
 
