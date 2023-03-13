@@ -16,14 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package io.github.protocol.pulsar;
 
-public interface PulsarAdmin {
-    static PulsarAdminBuilder builder() {
-        return new PulsarAdminBuilderImpl();
-    }
+import java.util.List;
 
-    Brokers brokers();
+public interface Tenants {
 
-    Tenants tenants();
+    void createTenant(String tenant, TenantInfo tenantInfo) throws PulsarAdminException;
+
+    void deleteTenant(String tenant, boolean force) throws PulsarAdminException;
+
+    void updateTenant(String tenant, TenantInfo tenantInfo) throws PulsarAdminException;
+
+    TenantInfo getTenantAdmin(String tenant) throws PulsarAdminException;
+
+    List<String> getTenants() throws PulsarAdminException;
+
 }

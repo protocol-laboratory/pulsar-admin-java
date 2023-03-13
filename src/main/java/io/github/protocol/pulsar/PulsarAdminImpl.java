@@ -22,13 +22,22 @@ public class PulsarAdminImpl implements PulsarAdmin {
 
     private final Brokers brokers;
 
+    private final Tenants tenants;
+
     PulsarAdminImpl(Configuration conf) {
         InnerHttpClient innerHttpClient = new InnerHttpClient(conf);
         this.brokers = new BrokersImpl(innerHttpClient);
+        this.tenants = new TenantsImpl(innerHttpClient);
     }
 
     @Override
     public Brokers brokers() {
         return brokers;
     }
+
+    @Override
+    public Tenants tenants() {
+        return tenants;
+    }
+
 }
