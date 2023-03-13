@@ -16,14 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package io.github.protocol.pulsar;
 
-public interface PulsarAdmin {
-    static PulsarAdminBuilder builder() {
-        return new PulsarAdminBuilderImpl();
-    }
 
-    Brokers brokers();
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-    Tenants tenants();
+import java.util.Set;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+public class TenantInfo {
+
+    private Set<String> adminRoles;
+
+    private Set<String> allowedClusters;
+
 }
