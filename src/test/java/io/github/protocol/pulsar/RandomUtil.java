@@ -38,4 +38,8 @@ public class RandomUtil {
         return random.nextLong();
     }
 
+    public static int randomPositiveInt(){
+        return random.nextInt(0, Integer.MAX_VALUE);
+    }
+
 }
