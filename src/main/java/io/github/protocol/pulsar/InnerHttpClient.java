@@ -65,7 +65,7 @@ public class InnerHttpClient {
             throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(getUri(url, params))
-                .POST(HttpRequest.BodyPublishers.ofString(body))
+                .POST(HttpRequest.BodyPublishers.ofString(body == null ? "" : body))
                 .setHeader("Content-Type", "application/json")
                 .build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -88,7 +88,7 @@ public class InnerHttpClient {
             throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(getUri(url, params))
-                .PUT(HttpRequest.BodyPublishers.ofString(body))
+                .PUT(HttpRequest.BodyPublishers.ofString(body == null ? "" : body))
                 .setHeader("Content-Type", "application/json")
                 .build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());

@@ -26,5 +26,19 @@ public class UrlConst {
 
     public static final String TENANTS = BASE_URL_V2 + "/tenants";
 
+    public static final String NAMESPACES = BASE_URL_V2 + "/namespaces";
+
+    public static final String BACKLOG_QUOTA_MAP = "/backlogQuotaMap";
+
+    public static final String BACKLOG_QUOTA = "/backlogQuota";
+
+    public static final String RETENTION = "/retention";
+
+    public static final String CLEAR_BACKLOG = "/clearBacklog";
+
+    public static final String MESSAGE_TTL = "/messageTTL";
+
+    public static final String COMPACTION_THRESHOLD = "/compactionThreshold";
+
     public static final String HEALTHCHECK = BROKERS + "/health";
 }

@@ -16,35 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package io.github.protocol.pulsar;
 
-public class PulsarAdminImpl implements PulsarAdmin {
+public enum RetentionPolicy {
 
-    private final Brokers brokers;
+    /**
+     * Policy which holds producer's send request until the resource becomes available (or holding times out).
+     */
+    producer_request_hold,
 
-    private final Tenants tenants;
+    /**
+     * Policy which throws javax.jms.ResourceAllocationException to the producer.
+     */
+    producer_exception,
 
-    private final Namespaces namespaces;
+    /**
+     * Policy which evicts the oldest message from the slowest consumer's backlog.
+     */
+    consumer_backlog_eviction,
 
-    PulsarAdminImpl(Configuration conf) {
-        InnerHttpClient innerHttpClient = new InnerHttpClient(conf);
-        this.brokers = new BrokersImpl(innerHttpClient);
-        this.tenants = new TenantsImpl(innerHttpClient);
-        this.namespaces = new NamespacesImpl(innerHttpClient);
-    }
-
-    @Override
-    public Brokers brokers() {
-        return brokers;
-    }
-
-    @Override
-    public Tenants tenants() {
-        return tenants;
-    }
-
-    @Override
-    public Namespaces namespaces() {
-        return namespaces;
-    }
 }
