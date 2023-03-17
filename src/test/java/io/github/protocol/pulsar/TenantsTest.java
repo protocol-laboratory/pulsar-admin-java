@@ -59,12 +59,12 @@ public class TenantsTest {
                 .allowedClusters(Set.of("global"))
                 .build();
         pulsarAdmin.tenants().createTenant(tenantName, initialTenantInfo);
-        Assertions.assertEquals(pulsarAdmin.tenants().getTenants(), List.of(tenantName, "public", "pulsar"));
-        Assertions.assertEquals(pulsarAdmin.tenants().getTenantAdmin(tenantName), initialTenantInfo);
+        Assertions.assertEquals(List.of(tenantName, "public", "pulsar"), pulsarAdmin.tenants().getTenants());
+        Assertions.assertEquals(initialTenantInfo, pulsarAdmin.tenants().getTenantAdmin(tenantName));
         pulsarAdmin.tenants().updateTenant(tenantName, updatedTenantInfo);
-        Assertions.assertEquals(pulsarAdmin.tenants().getTenantAdmin(tenantName), updatedTenantInfo);
+        Assertions.assertEquals(updatedTenantInfo, pulsarAdmin.tenants().getTenantAdmin(tenantName));
         pulsarAdmin.tenants().deleteTenant(tenantName, false);
-        Assertions.assertEquals(pulsarAdmin.tenants().getTenants(), List.of("public", "pulsar"));
+        Assertions.assertEquals(List.of("public", "pulsar"), pulsarAdmin.tenants().getTenants());
     }
 
 }
