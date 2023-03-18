@@ -16,20 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package io.github.protocol.pulsar;
 
-public interface PulsarAdmin {
-    static PulsarAdminBuilder builder() {
-        return new PulsarAdminBuilderImpl();
-    }
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-    Brokers brokers();
+import java.util.Map;
 
-    Tenants tenants();
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
+public class PartitionedTopicMetadata {
 
-    Namespaces namespaces();
+    public int partitions;
 
-    PersistentTopicsImpl persistentTopics();
+    public boolean deleted;
 
-    NonPersistentTopicsImpl nonPersistentTopics();
+    public Map<String, String> properties;
+
 }

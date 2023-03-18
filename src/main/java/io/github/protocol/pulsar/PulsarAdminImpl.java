@@ -26,11 +26,17 @@ public class PulsarAdminImpl implements PulsarAdmin {
 
     private final Namespaces namespaces;
 
+    private final PersistentTopicsImpl persistentTopics;
+
+    private final NonPersistentTopicsImpl nonPersistentTopics;
+
     PulsarAdminImpl(Configuration conf) {
         InnerHttpClient innerHttpClient = new InnerHttpClient(conf);
         this.brokers = new BrokersImpl(innerHttpClient);
         this.tenants = new TenantsImpl(innerHttpClient);
         this.namespaces = new NamespacesImpl(innerHttpClient);
+        this.persistentTopics = new PersistentTopicsImpl(innerHttpClient);
+        this.nonPersistentTopics = new NonPersistentTopicsImpl(innerHttpClient);
     }
 
     @Override
@@ -46,5 +52,15 @@ public class PulsarAdminImpl implements PulsarAdmin {
     @Override
     public Namespaces namespaces() {
         return namespaces;
+    }
+
+    @Override
+    public PersistentTopicsImpl persistentTopics() {
+        return persistentTopics;
+    }
+
+    @Override
+    public NonPersistentTopicsImpl nonPersistentTopics() {
+        return nonPersistentTopics;
     }
 }

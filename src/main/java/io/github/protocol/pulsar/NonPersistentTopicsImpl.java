@@ -16,20 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package io.github.protocol.pulsar;
 
-public interface PulsarAdmin {
-    static PulsarAdminBuilder builder() {
-        return new PulsarAdminBuilderImpl();
+public class NonPersistentTopicsImpl extends PersistentTopicsImpl {
+
+    private static final String BASE_URL_NON_PERSISTENT_DOMAIN = UrlConst.BASE_URL_V2 + "/non-persistent";
+
+    public NonPersistentTopicsImpl(InnerHttpClient httpClient) {
+        super(httpClient);
     }
 
-    Brokers brokers();
-
-    Tenants tenants();
-
-    Namespaces namespaces();
-
-    PersistentTopicsImpl persistentTopics();
-
-    NonPersistentTopicsImpl nonPersistentTopics();
+    @Override
+    public String getDomainBaseUrl() {
+        return BASE_URL_NON_PERSISTENT_DOMAIN;
+    }
 }
