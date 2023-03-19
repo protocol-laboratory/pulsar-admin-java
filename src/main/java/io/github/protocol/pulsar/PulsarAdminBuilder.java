@@ -24,4 +24,19 @@ public interface PulsarAdminBuilder {
     PulsarAdminBuilder host(String host);
 
     PulsarAdminBuilder port(int port);
+
+    PulsarAdminBuilder useSsl(boolean useSsl);
+
+    PulsarAdminBuilder keyStorePath(String keyStorePath);
+
+    PulsarAdminBuilder keyStorePassword(String keyStorePassword);
+
+    PulsarAdminBuilder trustStorePath(String trustStorePath);
+
+    PulsarAdminBuilder trustStorePassword(String trustStorePassword);
+
+    PulsarAdminBuilder disableSslVerify(boolean disableSslVerify);
+
+    PulsarAdminBuilder disableHostnameVerification(boolean disableHostnameVerification);
+
 }
