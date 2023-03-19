@@ -82,14 +82,23 @@ public class NonPersistentTopicsTest {
         String namespace = RandomUtil.randomString();
         String topic = RandomUtil.randomString();
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
-        pulsarAdmin.persistentTopics().createNonPartitionedTopic(tenant, namespace, topic, false, null);
+        pulsarAdmin.nonPersistentTopics().createNonPartitionedTopic(tenant, namespace, topic, false, null);
         Assertions.assertEquals(
-                List.of(String.format("persistent://%s/%s/%s", tenant, namespace, topic)),
-                pulsarAdmin.persistentTopics().getList(tenant, namespace, null, false));
-        pulsarAdmin.persistentTopics().deleteTopic(tenant, namespace, topic, false, false);
+                List.of(String.format("non-persistent://%s/%s/%s", tenant, namespace, topic)),
+                pulsarAdmin.nonPersistentTopics().getList(tenant, namespace, null, false));
+        pulsarAdmin.nonPersistentTopics().deleteTopic(tenant, namespace, topic, false, false);
         Assertions.assertEquals(
                 List.of(),
-                pulsarAdmin.persistentTopics().getList(tenant, namespace, null, false));
+                pulsarAdmin.nonPersistentTopics().getList(tenant, namespace, null, false));
     }
 
+    @Test
+    public void getLastMessageIdTest() throws PulsarAdminException {
+        String namespace = RandomUtil.randomString();
+        String topic = RandomUtil.randomString();
+        pulsarAdmin.namespaces().createNamespace(tenant, namespace);
+        pulsarAdmin.nonPersistentTopics().createNonPartitionedTopic(tenant, namespace, topic, false, null);
+        Assertions.assertThrows(PulsarAdminException.class, () -> pulsarAdmin.nonPersistentTopics().getLastMessageId(
+                tenant, namespace, topic, false));
+    }
 }

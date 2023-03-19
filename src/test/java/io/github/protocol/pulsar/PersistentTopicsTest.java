@@ -20,6 +20,7 @@
 package io.github.protocol.pulsar;
 
 import io.github.embedded.pulsar.core.EmbeddedPulsarServer;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,7 +28,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class PersistentTopicsTest {
 
@@ -121,6 +124,91 @@ public class PersistentTopicsTest {
                 List.of(String.format("persistent://%s/%s/%s-partition-0", tenant, namespace, topic),
                         String.format("persistent://%s/%s/%s-partition-1", tenant, namespace, topic)),
                 pulsarAdmin.persistentTopics().getList(tenant, namespace, null, false));
+    }
+
+    @Test
+    public void getLastMessageIdTest() throws PulsarAdminException {
+        String namespace = RandomUtil.randomString();
+        String topic = RandomUtil.randomString();
+        pulsarAdmin.namespaces().createNamespace(tenant, namespace);
+        pulsarAdmin.persistentTopics().createNonPartitionedTopic(tenant, namespace, topic, false, null);
+        Assertions.assertNotNull(pulsarAdmin.persistentTopics().getLastMessageId(tenant, namespace, topic, false));
+        String partitionedTopic = RandomUtil.randomString();
+        pulsarAdmin.persistentTopics().createPartitionedTopic(tenant, namespace, partitionedTopic, 2, false);
+        Assertions.assertNotNull(pulsarAdmin.persistentTopics().getLastMessageId(tenant, namespace, topic, false));
+    }
+
+    @Test
+    public void backLogQuotaTest() throws PulsarAdminException {
+        String namespace = RandomUtil.randomString();
+        String topic = RandomUtil.randomString();
+        pulsarAdmin.namespaces().createNamespace(tenant, namespace);
+        pulsarAdmin.persistentTopics().createNonPartitionedTopic(tenant, namespace, topic, false, null);
+        BacklogQuota backlogQuota1 = BacklogQuota.builder()
+                .limitSize(RandomUtil.randomLong())
+                .limitTime(RandomUtil.randomInt())
+                .policy(RetentionPolicy.consumer_backlog_eviction)
+                .build();
+        BacklogQuota backlogQuota2 = BacklogQuota.builder()
+                .limitSize(RandomUtil.randomLong())
+                .limitTime(RandomUtil.randomInt())
+                .policy(RetentionPolicy.producer_request_hold)
+                .build();
+        pulsarAdmin.persistentTopics().setBacklogQuota(tenant, namespace, topic, false, false,
+                BacklogQuotaType.destination_storage, backlogQuota1);
+
+        //wait for metadata refresh
+
+        Awaitility.await().until(() -> Map.of(BacklogQuotaType.destination_storage, backlogQuota1)
+                .equals(new TreeMap<>(pulsarAdmin.persistentTopics().getBacklogQuotaMap(tenant, namespace, topic, false,
+                        false, false))));
+        pulsarAdmin.persistentTopics().setBacklogQuota(tenant, namespace, topic, false, false,
+                BacklogQuotaType.message_age, backlogQuota2);
+
+        //wait for metadata refresh
+
+        Awaitility.await().until(() -> Map.of(BacklogQuotaType.message_age, backlogQuota2,
+                        BacklogQuotaType.destination_storage, backlogQuota1)
+                .equals(new TreeMap<>(pulsarAdmin.persistentTopics().getBacklogQuotaMap(tenant, namespace, topic, false,
+                        false, false))));
+        pulsarAdmin.persistentTopics().removeBacklogQuota(tenant, namespace, topic,
+                BacklogQuotaType.destination_storage, false, false);
+        Assertions.assertEquals(Map.of(BacklogQuotaType.message_age, backlogQuota2),
+                pulsarAdmin.persistentTopics().getBacklogQuotaMap(tenant, namespace, topic, false,
+                        false, false));
+        Assertions.assertEquals(0L, pulsarAdmin.persistentTopics().getBacklogSizeByMessageId(tenant, namespace,
+                topic, false, pulsarAdmin.persistentTopics().getLastMessageId(tenant, namespace, topic, false)));
+        Assertions.assertNotNull(pulsarAdmin.persistentTopics().getBacklog(tenant, namespace, topic, false));
+    }
+
+    @Test
+    public void retentionTest() throws PulsarAdminException {
+        String namespace = RandomUtil.randomString();
+        String topic = RandomUtil.randomString();
+        pulsarAdmin.namespaces().createNamespace(tenant, namespace);
+        pulsarAdmin.persistentTopics().createNonPartitionedTopic(tenant, namespace, topic, false, null);
+        BacklogQuota backlogQuota = BacklogQuota.builder()
+                .limitSize(RandomUtil.randomPositiveLong())
+                .limitTime(RandomUtil.randomPositiveInt())
+                .policy(RetentionPolicy.consumer_backlog_eviction)
+                .build();
+        pulsarAdmin.persistentTopics().setBacklogQuota(tenant, namespace, topic, false, false,
+                BacklogQuotaType.destination_storage, backlogQuota);
+
+        RetentionPolicies retentionPolicies = RetentionPolicies.builder()
+                .retentionSizeInMB(RandomUtil.randomNegativeInt())
+                .retentionTimeInMinutes(RandomUtil.randomNegativeInt())
+                .build();
+        pulsarAdmin.persistentTopics().setRetention(tenant, namespace, topic, false, false, retentionPolicies);
+
+        //wait for metadata refresh
+
+        Awaitility.await().until(() -> retentionPolicies.equals(pulsarAdmin.persistentTopics().getRetention(
+                tenant, namespace, topic, false, false, false)));
+
+        pulsarAdmin.persistentTopics().removeRetention(tenant, namespace, topic, false);
+        Assertions.assertNull(pulsarAdmin.persistentTopics().getRetention(tenant, namespace, topic,
+                false, false, false));
     }
 
 }

@@ -22,8 +22,12 @@ package io.github.protocol.pulsar;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 public class MessageIdImpl {
@@ -34,15 +38,14 @@ public class MessageIdImpl {
 
     private Integer partitionIndex;
 
+    private Integer batchIndex;
+
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append(ledgerId)
-                .append(':')
-                .append(entryId)
-                .append(':')
-                .append(partitionIndex)
-                .toString();
+        if (batchIndex != null) {
+            return String.valueOf(ledgerId) + ':' + entryId + ':' + partitionIndex + ':' + batchIndex;
+        }
+        return String.valueOf(ledgerId) + ':' + entryId + ':' + partitionIndex;
     }
 
 }
