@@ -45,6 +45,10 @@ public class Configuration {
 
     public boolean disableHostnameVerification;
 
+    public String[] tlsProtocols;
+
+    public String[] tlsCiphers;
+
     public Configuration() {
     }
 }

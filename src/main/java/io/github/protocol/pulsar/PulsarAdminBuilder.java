@@ -39,4 +39,8 @@ public interface PulsarAdminBuilder {
 
     PulsarAdminBuilder disableHostnameVerification(boolean disableHostnameVerification);
 
+    PulsarAdminBuilder tlsProtocols(String[] tlsProtocols);
+
+    PulsarAdminBuilder tlsCiphers(String[] tlsCiphers);
+
 }
