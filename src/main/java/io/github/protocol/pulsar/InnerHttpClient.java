@@ -37,10 +37,18 @@ public class InnerHttpClient {
 
     public InnerHttpClient(Configuration conf) {
         this.conf = conf;
-        this.client = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .build();
-        this.httpPrefix = "http://" + conf.getHost() + ":" + conf.getPort();
+        HttpClient.Builder builder = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1);
+        if (conf.isUseSsl()) {
+            builder = builder
+                    .sslContext(SslContextUtil.buildFromJks(conf.keyStorePath, conf.keyStorePassword,
+                            conf.trustStorePath, conf.trustStorePassword, conf.disableSslVerify,
+                            conf.tlsProtocols, conf.tlsCiphers));
+            this.httpPrefix = "https://" + conf.getHost() + ":" + conf.getPort();
+        } else {
+            this.httpPrefix = "http://" + conf.getHost() + ":" + conf.getPort();
+        }
+        this.client = builder.build();
     }
 
     public HttpResponse<String> get(String url) throws IOException, InterruptedException {

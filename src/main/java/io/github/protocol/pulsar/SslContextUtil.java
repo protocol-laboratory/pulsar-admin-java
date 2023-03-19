@@ -18,5 +18,12 @@
  */
 package io.github.protocol.pulsar;
 
+import javax.net.ssl.SSLContext;
+
 public class SslContextUtil {
+    public static SSLContext buildFromJks(String keyStorePath, String keyStorePassword, String trustStorePath,
+                                          String trustStorePassword, boolean disableSslVerify, String[] tlsProtocols,
+                                          String[] tlsCiphers) {
+        throw new UnsupportedOperationException();
+    }
 }
