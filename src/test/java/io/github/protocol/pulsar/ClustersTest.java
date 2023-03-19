@@ -16,22 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package io.github.protocol.pulsar;
 
-public interface PulsarAdmin {
-    static PulsarAdminBuilder builder() {
-        return new PulsarAdminBuilderImpl();
+import io.github.embedded.pulsar.core.EmbeddedPulsarServer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+public class ClustersTest {
+
+    private static final EmbeddedPulsarServer SERVER = new EmbeddedPulsarServer();
+
+    @BeforeAll
+    public static void setup() throws Exception {
+        SERVER.start();
     }
 
-    Clusters clusters();
+    @AfterAll
+    public static void teardown() throws Exception {
+        SERVER.close();
+    }
 
-    Brokers brokers();
+    @Test
+    public void getClustersTest() throws PulsarAdminException {
+        Assertions.assertEquals(List.of("standalone"),
+                PulsarAdmin.builder().port(SERVER.getWebPort()).build().clusters().getClusters());
+    }
 
-    Tenants tenants();
-
-    Namespaces namespaces();
-
-    PersistentTopicsImpl persistentTopics();
-
-    NonPersistentTopicsImpl nonPersistentTopics();
 }

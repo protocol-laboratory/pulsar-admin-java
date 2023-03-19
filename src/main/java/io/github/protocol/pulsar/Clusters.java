@@ -16,22 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package io.github.protocol.pulsar;
 
-public interface PulsarAdmin {
-    static PulsarAdminBuilder builder() {
-        return new PulsarAdminBuilderImpl();
-    }
+import java.util.List;
 
-    Clusters clusters();
+public interface Clusters {
 
-    Brokers brokers();
+    List<String> getClusters() throws PulsarAdminException;
 
-    Tenants tenants();
-
-    Namespaces namespaces();
-
-    PersistentTopicsImpl persistentTopics();
-
-    NonPersistentTopicsImpl nonPersistentTopics();
 }
