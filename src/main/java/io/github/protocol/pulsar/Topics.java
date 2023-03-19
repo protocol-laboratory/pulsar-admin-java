@@ -51,7 +51,7 @@ public interface Topics {
 
     void createMissedPartitions(String tenant, String namespace, String encodedTopic) throws PulsarAdminException;
 
-    void getLastMessageId(String tenant, String namespace, String encodedTopic, boolean authoritative)
+    MessageIdImpl getLastMessageId(String tenant, String namespace, String encodedTopic, boolean authoritative)
             throws PulsarAdminException;
 
     RetentionPolicies getRetention(String tenant, String namespace, String encodedTopic,

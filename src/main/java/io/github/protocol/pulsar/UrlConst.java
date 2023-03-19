@@ -52,5 +52,7 @@ public class UrlConst {
 
     public static final String CREATE_MISSED_PARTITIONS = "/createMissedPartitions";
 
+    public static final String LAST_MESSAGE_ID = "/lastMessageId";
+
     public static final String HEALTHCHECK = BROKERS + "/health";
 }

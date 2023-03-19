@@ -209,7 +209,8 @@ public class PersistentTopicsImpl implements Topics {
             HttpResponse<String> response = httpClient.post(url);
             if (response.statusCode() != 204) {
                 throw new PulsarAdminException(
-                        String.format("failed to delete non-partitioned topic %s/%s/%s, status code %s, body : %s",
+                        String.format("failed to create missing partitions for topic %s/%s/%s, "
+                                        + "status code %s, body : %s",
                                 tenant, namespace, encodedTopic, response.statusCode(), response.body()));
             }
         } catch (IOException | InterruptedException e) {
@@ -218,27 +219,78 @@ public class PersistentTopicsImpl implements Topics {
     }
 
     @Override
-    public void getLastMessageId(String tenant, String namespace, String encodedTopic, boolean authoritative)
+    public MessageIdImpl getLastMessageId(String tenant, String namespace, String encodedTopic, boolean authoritative)
             throws PulsarAdminException {
-
+        String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
+                UrlConst.LAST_MESSAGE_ID);
+        try {
+            HttpResponse<String> response = httpClient.get(url, "authoritative", String.valueOf(authoritative));
+            if (response.statusCode() != 200) {
+                throw new PulsarAdminException(
+                        String.format("failed to get last message id of topic %s/%s/%s, status code %s, body : %s",
+                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+            }
+            return JacksonService.toObject(response.body(), MessageIdImpl.class);
+        } catch (IOException | InterruptedException e) {
+            throw new PulsarAdminException(e);
+        }
     }
 
     @Override
     public RetentionPolicies getRetention(String tenant, String namespace, String encodedTopic, boolean isGlobal,
                                           boolean applied, boolean authoritative) throws PulsarAdminException {
-        return null;
+        String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
+                UrlConst.RETENTION);
+        try {
+            HttpResponse<String> response = httpClient.get(url,
+                    "isGlobal", String.valueOf(isGlobal),
+                    "applied", String.valueOf(applied),
+                    "authoritative", String.valueOf(authoritative));
+            if (response.statusCode() != 200) {
+                throw new PulsarAdminException(
+                        String.format("failed to get retention of topic %s/%s/%s, status code %s, body : %s",
+                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+            }
+            return JacksonService.toObject(response.body(), RetentionPolicies.class);
+        } catch (IOException | InterruptedException e) {
+            throw new PulsarAdminException(e);
+        }
     }
 
     @Override
     public void setRetention(String tenant, String namespace, String encodedTopic, boolean authoritative,
                              boolean isGlobal, RetentionPolicies retention) throws PulsarAdminException {
-
+        String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
+                UrlConst.RETENTION);
+        try {
+            HttpResponse<String> response = httpClient.post(url, retention,
+                    "authoritative", String.valueOf(authoritative),
+                    "isGlobal", String.valueOf(isGlobal));
+            if (response.statusCode() != 204) {
+                throw new PulsarAdminException(
+                        String.format("failed to set retention for topic %s/%s/%s, status code %s, body : %s",
+                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new PulsarAdminException(e);
+        }
     }
 
     @Override
     public void removeRetention(String tenant, String namespace, String encodedTopic, boolean authoritative)
             throws PulsarAdminException {
-
+        String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
+                UrlConst.RETENTION);
+        try {
+            HttpResponse<String> response = httpClient.delete(url, "authoritative", String.valueOf(authoritative));
+            if (response.statusCode() != 204) {
+                throw new PulsarAdminException(
+                        String.format("failed to delete retention of topic %s/%s/%s, status code %s, body : %s",
+                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new PulsarAdminException(e);
+        }
     }
 
     @Override
@@ -246,33 +298,102 @@ public class PersistentTopicsImpl implements Topics {
                                                                   String encodedTopic, boolean applied,
                                                                   boolean authoritative, boolean isGlobal)
             throws PulsarAdminException {
-        return null;
+        String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
+                UrlConst.BACKLOG_QUOTA_MAP);
+        try {
+            HttpResponse<String> response = httpClient.get(url,
+                    "applied", String.valueOf(applied),
+                    "authoritative", String.valueOf(authoritative),
+                    "isGlobal", String.valueOf(isGlobal));
+            if (response.statusCode() != 200) {
+                throw new PulsarAdminException(
+                        String.format("failed to get backlog quota map of topic %s/%s/%s, status code %s, body : %s",
+                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+            }
+            return JacksonService.toRefer(response.body(), new TypeReference<Map<BacklogQuotaType, BacklogQuota>>() {
+            });
+        } catch (IOException | InterruptedException e) {
+            throw new PulsarAdminException(e);
+        }
     }
 
     @Override
     public void setBacklogQuota(String tenant, String namespace, String encodedTopic, boolean authoritative,
                                 boolean isGlobal, BacklogQuotaType backlogQuotaType, BacklogQuota backlogQuota)
             throws PulsarAdminException {
-
+        String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
+                UrlConst.BACKLOG_QUOTA);
+        try {
+            HttpResponse<String> response = httpClient.post(url, backlogQuota,
+                    "authoritative", String.valueOf(authoritative),
+                    "isGlobal", String.valueOf(isGlobal),
+                    "backlogQuotaType", String.valueOf(backlogQuotaType));
+            if (response.statusCode() != 204) {
+                throw new PulsarAdminException(
+                        String.format("failed to set backlog quota for topic %s/%s/%s, status code %s, body : %s",
+                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new PulsarAdminException(e);
+        }
     }
 
     @Override
     public void removeBacklogQuota(String tenant, String namespace, String encodedTopic,
                                    BacklogQuotaType backlogQuotaType, boolean authoritative, boolean isGlobal)
             throws PulsarAdminException {
-
+        String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
+                UrlConst.BACKLOG_QUOTA);
+        try {
+            HttpResponse<String> response = httpClient.delete(url,
+                    "backlogQuotaType", String.valueOf(backlogQuotaType),
+                    "authoritative", String.valueOf(authoritative),
+                    "isGlobal", String.valueOf(isGlobal));
+            if (response.statusCode() != 204) {
+                throw new PulsarAdminException(
+                        String.format("failed to remove backlog quota of topic %s/%s/%s, status code %s, body : %s",
+                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new PulsarAdminException(e);
+        }
     }
 
     @Override
     public PersistentOfflineTopicStats getBacklog(String tenant, String namespace, String encodedTopic,
                                                   boolean authoritative) throws PulsarAdminException {
-        return null;
+        String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
+                UrlConst.BACKLOG);
+        try {
+            HttpResponse<String> response = httpClient.get(url, "authoritative", String.valueOf(authoritative));
+            if (response.statusCode() != 200) {
+                throw new PulsarAdminException(
+                        String.format("failed to get backlog of topic %s/%s/%s, status code %s, body : %s",
+                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+            }
+            return JacksonService.toObject(response.body(), PersistentOfflineTopicStats.class);
+        } catch (IOException | InterruptedException e) {
+            throw new PulsarAdminException(e);
+        }
     }
 
     @Override
     public long getBacklogSizeByMessageId(String tenant, String namespace, String encodedTopic, boolean authoritative,
                                           MessageIdImpl messageId) throws PulsarAdminException {
-        return 0;
+        String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
+                UrlConst.BACKLOG_SIZE);
+        try {
+            HttpResponse<String> response = httpClient.put(url, messageId, "authoritative",
+                    String.valueOf(authoritative));
+            if (response.statusCode() != 200) {
+                throw new PulsarAdminException(
+                        String.format("failed to get backlog size of topic %s/%s/%s, status code %s, body : %s",
+                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+            }
+            return JacksonService.toObject(response.body(), Long.class);
+        } catch (IOException | InterruptedException e) {
+            throw new PulsarAdminException(e);
+        }
     }
 
 }

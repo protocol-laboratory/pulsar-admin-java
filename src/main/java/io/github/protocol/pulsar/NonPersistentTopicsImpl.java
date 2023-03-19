@@ -31,4 +31,11 @@ public class NonPersistentTopicsImpl extends PersistentTopicsImpl {
     public String getDomainBaseUrl() {
         return BASE_URL_NON_PERSISTENT_DOMAIN;
     }
+
+    @Override
+    public MessageIdImpl getLastMessageId(String tenant, String namespace, String encodedTopic, boolean authoritative)
+            throws PulsarAdminException {
+        throw new PulsarAdminException(new UnsupportedOperationException(
+                "get last message id on non-persistent topic is not allowed"));
+    }
 }
