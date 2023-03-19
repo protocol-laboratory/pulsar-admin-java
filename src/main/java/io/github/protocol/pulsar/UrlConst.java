@@ -22,6 +22,8 @@ public class UrlConst {
 
     public static final String BASE_URL_V2 = "/admin/v2";
 
+    public static final String CLUSTERS = BASE_URL_V2 + "/clusters";
+
     public static final String BROKERS = BASE_URL_V2 + "/brokers";
 
     public static final String TENANTS = BASE_URL_V2 + "/tenants";

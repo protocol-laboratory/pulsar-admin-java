@@ -20,6 +20,8 @@ package io.github.protocol.pulsar;
 
 public class PulsarAdminImpl implements PulsarAdmin {
 
+    private final Clusters clusters;
+
     private final Brokers brokers;
 
     private final Tenants tenants;
@@ -32,11 +34,17 @@ public class PulsarAdminImpl implements PulsarAdmin {
 
     PulsarAdminImpl(Configuration conf) {
         InnerHttpClient innerHttpClient = new InnerHttpClient(conf);
+        this.clusters = new ClustersImpl(innerHttpClient);
         this.brokers = new BrokersImpl(innerHttpClient);
         this.tenants = new TenantsImpl(innerHttpClient);
         this.namespaces = new NamespacesImpl(innerHttpClient);
         this.persistentTopics = new PersistentTopicsImpl(innerHttpClient);
         this.nonPersistentTopics = new NonPersistentTopicsImpl(innerHttpClient);
+    }
+
+    @Override
+    public Clusters clusters() {
+        return clusters;
     }
 
     @Override
