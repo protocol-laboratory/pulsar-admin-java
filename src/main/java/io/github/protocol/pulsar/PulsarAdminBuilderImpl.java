@@ -41,4 +41,46 @@ public class PulsarAdminBuilderImpl implements PulsarAdminBuilder {
         this.conf.setPort(port);
         return this;
     }
+
+    @Override
+    public PulsarAdminBuilder useSsl(boolean useSsl) {
+        this.conf.setUseSsl(useSsl);
+        return this;
+    }
+
+    @Override
+    public PulsarAdminBuilder keyStorePath(String keyStorePath) {
+        this.conf.setKeyStorePath(keyStorePath);
+        return this;
+    }
+
+    @Override
+    public PulsarAdminBuilder keyStorePassword(String keyStorePassword) {
+        this.conf.setKeyStorePassword(keyStorePassword);
+        return this;
+    }
+
+    @Override
+    public PulsarAdminBuilder trustStorePath(String trustStorePath) {
+        this.conf.setTrustStorePath(trustStorePath);
+        return this;
+    }
+
+    @Override
+    public PulsarAdminBuilder trustStorePassword(String trustStorePassword) {
+        this.conf.setTrustStorePassword(trustStorePassword);
+        return this;
+    }
+
+    @Override
+    public PulsarAdminBuilder disableSslVerify(boolean disableSslVerify) {
+        this.conf.setDisableSslVerify(disableSslVerify);
+        return this;
+    }
+
+    @Override
+    public PulsarAdminBuilder disableHostnameVerification(boolean disableHostnameVerification) {
+        this.conf.setDisableHostnameVerification(disableHostnameVerification);
+        return this;
+    }
 }

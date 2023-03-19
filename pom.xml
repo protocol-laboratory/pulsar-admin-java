@@ -34,7 +34,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <src.dir>src/main/java</src.dir>
         <!-- dependency -->
-        <embedded-pulsar.version>0.0.4</embedded-pulsar.version>
+        <embedded-pulsar.version>0.0.5</embedded-pulsar.version>
         <jackson.version>2.14.2</jackson.version>
         <junit.version>5.9.2</junit.version>
         <log4j.version>2.20.0</log4j.version>
