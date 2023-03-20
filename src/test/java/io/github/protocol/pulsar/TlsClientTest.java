@@ -101,6 +101,36 @@ public class TlsClientTest {
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
 
+    @Test
+    public void testTlsByVerifyAndNoHostnameVerification() throws PulsarAdminException {
+        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
+                .port(server.getWebPort())
+                .useSsl(true)
+                .keyStorePath(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath())
+                .keyStorePassword(CLIENT_CERT_PASSWORD)
+                .trustStorePath(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath())
+                .trustStorePassword(CLIENT_CERT_PASSWORD)
+                .disableSslVerify(false)
+                .disableHostnameVerification(false)
+                .build();
+        pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
+    }
+
+    @Test
+    public void testTlsByVerifyAndHostnameVerification() throws PulsarAdminException {
+        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
+                .port(server.getWebPort())
+                .useSsl(true)
+                .keyStorePath(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath())
+                .keyStorePassword(CLIENT_CERT_PASSWORD)
+                .trustStorePath(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath())
+                .trustStorePassword(CLIENT_CERT_PASSWORD)
+                .disableSslVerify(false)
+                .disableHostnameVerification(true)
+                .build();
+        pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
+    }
+
     @AfterAll
     public static void teardown() throws Exception {
         server.close();
