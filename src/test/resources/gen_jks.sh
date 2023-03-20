@@ -20,8 +20,8 @@
 
 client_pass=pulsar_client_pwd
 server_pass=pulsar_server_pwd
-server_dname="C=CN,ST=GD,L=SZ,O=sh,OU=sh,CN=shoothzj"
-client_dname="C=CN,ST=GD,L=SZ,O=sh,OU=sh,CN=shoothzj"
+server_dname="C=CN,ST=GD,L=SZ,O=sh,OU=sh,CN=localhost"
+client_dname="C=CN,ST=GD,L=SZ,O=sh,OU=sh,CN=localhost"
 echo "generate client keystore"
 keytool -genkeypair -keypass $client_pass -storepass $client_pass -dname $client_dname -keyalg RSA -keysize 2048 -validity 3650 -keystore pulsar_client_key.jks
 echo "generate server keystore"
