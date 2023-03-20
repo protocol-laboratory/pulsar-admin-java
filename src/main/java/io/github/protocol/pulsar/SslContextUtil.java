@@ -75,6 +75,7 @@ public class SslContextUtil {
 
             // Set up SSL parameters
             sslContext.init(keyManagerFactory.getKeyManagers(), trustManagers, new SecureRandom());
+
             SSLParameters sslParameters = sslContext.getDefaultSSLParameters();
             if (tlsProtocols != null && tlsProtocols.length != 0) {
                 sslParameters.setProtocols(tlsProtocols);
