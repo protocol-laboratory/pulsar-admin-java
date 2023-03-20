@@ -73,6 +73,34 @@ public class TlsClientTest {
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
 
+    @Test
+    public void testTlsCustomProtocol() throws PulsarAdminException {
+        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
+                .port(server.getWebPort())
+                .useSsl(true)
+                .keyStorePath(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath())
+                .keyStorePassword(CLIENT_CERT_PASSWORD)
+                .disableSslVerify(true)
+                .tlsProtocols(new String[]{"TLSv1.2"})
+                .build();
+        pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
+    }
+
+    @Test
+    public void testTlsCustomCiphers() throws PulsarAdminException {
+        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
+                .port(server.getWebPort())
+                .useSsl(true)
+                .keyStorePath(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath())
+                .keyStorePassword(CLIENT_CERT_PASSWORD)
+                .disableSslVerify(true)
+                .tlsCiphers(new String[]{"ECDHE-ECDSA-AES128-GCM-SHA256", "ECDHE-RSA-AES128-GCM-SHA256",
+                        "ECDHE-ECDSA-AES256-GCM-SHA384", "ECDHE-RSA-AES256-GCM-SHA384", "ECDHE-ECDSA-CHACHA20-POLY1305",
+                        "ECDHE-RSA-CHACHA20-POLY1305", "DHE-RSA-AES128-GCM-SHA256", "DHE-RSA-AES256-GCM-SHA384"})
+                .build();
+        pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
+    }
+
     @AfterAll
     public static void teardown() throws Exception {
         server.close();
