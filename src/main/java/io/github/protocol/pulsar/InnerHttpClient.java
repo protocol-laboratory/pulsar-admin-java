@@ -43,6 +43,7 @@ public class InnerHttpClient {
             builder = builder
                     .sslContext(SslContextUtil.buildFromJks(conf.keyStorePath, conf.keyStorePassword,
                             conf.trustStorePath, conf.trustStorePassword, conf.disableSslVerify,
+                            conf.disableHostnameVerification,
                             conf.tlsProtocols, conf.tlsCiphers));
             this.httpPrefix = "https://" + conf.getHost() + ":" + conf.getPort();
         } else {
