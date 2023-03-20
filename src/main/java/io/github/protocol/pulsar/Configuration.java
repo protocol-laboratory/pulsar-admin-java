@@ -43,8 +43,6 @@ public class Configuration {
 
     public boolean disableSslVerify;
 
-    public boolean disableHostnameVerification;
-
     public String[] tlsProtocols;
 
     public String[] tlsCiphers;

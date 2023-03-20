@@ -79,12 +79,6 @@ public class PulsarAdminBuilderImpl implements PulsarAdminBuilder {
     }
 
     @Override
-    public PulsarAdminBuilder disableHostnameVerification(boolean disableHostnameVerification) {
-        this.conf.setDisableHostnameVerification(disableHostnameVerification);
-        return this;
-    }
-
-    @Override
     public PulsarAdminBuilder tlsProtocols(String[] tlsProtocols) {
         this.conf.setTlsProtocols(tlsProtocols);
         return this;

@@ -33,7 +33,6 @@ public class SslContextUtil {
                                           String trustStorePath,
                                           String trustStorePassword,
                                           boolean disableSslVerify,
-                                          boolean disableHostnameVerification,
                                           String[] tlsProtocols,
                                           String[] tlsCiphers) {
         try {
