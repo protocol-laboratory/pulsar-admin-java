@@ -21,7 +21,9 @@ package io.github.protocol.pulsar;
 import io.github.embedded.pulsar.core.EmbeddedPulsarConfig;
 import io.github.embedded.pulsar.core.EmbeddedPulsarServer;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
@@ -57,6 +59,20 @@ public class TlsClientWrongHostTest {
         config.clientTrustStorePassword(CLIENT_CERT_PASSWORD);
         server = new EmbeddedPulsarServer(config);
         server.start();
+    }
+
+    @Test
+    public void testTlsByVerifyAndNoHostnameVerification() throws PulsarAdminException {
+        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
+                .port(server.getWebPort())
+                .useSsl(true)
+                .keyStorePath(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath())
+                .keyStorePassword(CLIENT_CERT_PASSWORD)
+                .trustStorePath(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath())
+                .trustStorePassword(CLIENT_CERT_PASSWORD)
+                .disableSslVerify(false)
+                .build();
+        Assertions.assertThrows(PulsarAdminException.class, () -> pulsarAdmin.brokers().healthcheck(TopicVersion.V1));
     }
 
     @AfterAll

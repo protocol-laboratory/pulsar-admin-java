@@ -111,7 +111,6 @@ public class TlsClientTest {
                 .trustStorePath(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath())
                 .trustStorePassword(CLIENT_CERT_PASSWORD)
                 .disableSslVerify(false)
-                .disableHostnameVerification(false)
                 .build();
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
@@ -126,7 +125,6 @@ public class TlsClientTest {
                 .trustStorePath(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath())
                 .trustStorePassword(CLIENT_CERT_PASSWORD)
                 .disableSslVerify(false)
-                .disableHostnameVerification(true)
                 .build();
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
