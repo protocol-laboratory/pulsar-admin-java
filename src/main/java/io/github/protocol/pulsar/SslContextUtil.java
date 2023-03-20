@@ -20,6 +20,7 @@ package io.github.protocol.pulsar;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
@@ -74,6 +75,14 @@ public class SslContextUtil {
 
             // Set up SSL parameters
             sslContext.init(keyManagerFactory.getKeyManagers(), trustManagers, new SecureRandom());
+
+            SSLParameters sslParameters = sslContext.getDefaultSSLParameters();
+            if (tlsProtocols != null && tlsProtocols.length != 0) {
+                sslParameters.setProtocols(tlsProtocols);
+            }
+            if (tlsCiphers != null && tlsCiphers.length != 0) {
+                sslParameters.setCipherSuites(tlsCiphers);
+            }
 
             if (disableSslVerify) {
                 sslContext.getDefaultSSLParameters().setEndpointIdentificationAlgorithm(null);
