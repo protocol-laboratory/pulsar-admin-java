@@ -28,16 +28,16 @@ import java.io.File;
 
 public class TlsClientTest {
 
-    private static EmbeddedPulsarServer SERVER;
+    private static EmbeddedPulsarServer server;
 
-    private static String clientKeystoreFile =
+    private static final String CLIENT_KEYSTORE_FILE =
             TlsClientTest.class.getClassLoader().getResource("pulsar_client_key.jks").getFile();
-    private static String clientTruststoreFile =
+    private static final String CLIENT_TRUSTSTORE_FILE =
             TlsClientTest.class.getClassLoader().getResource("pulsar_client_trust.jks").getFile();
 
-    private static String serverKeystoreFile =
+    private static final String SERVER_KEYSTORE_FILE =
             TlsClientTest.class.getClassLoader().getResource("pulsar_server_key.jks").getFile();
-    private static String serverTruststoreFile =
+    private static final String SERVER_TRUSTSTORE_FILE =
             TlsClientTest.class.getClassLoader().getResource("pulsar_server_trust.jks").getFile();
 
     private static final String CLIENT_CERT_PASSWORD = "pulsar_client_pwd";
@@ -48,20 +48,20 @@ public class TlsClientTest {
     public static void setup() throws Exception {
         EmbeddedPulsarConfig config = new EmbeddedPulsarConfig();
         config.enableTls(true);
-        config.serverKeyStorePath(new File(serverKeystoreFile).getAbsolutePath());
+        config.serverKeyStorePath(new File(SERVER_KEYSTORE_FILE).getAbsolutePath());
         config.serverKeyStorePassword(SERVER_CERT_PASSWORD);
-        config.serverTrustStorePath(new File(serverTruststoreFile).getAbsolutePath());
+        config.serverTrustStorePath(new File(SERVER_TRUSTSTORE_FILE).getAbsolutePath());
         config.serverTrustStorePassword(SERVER_CERT_PASSWORD);
-        config.clientKeyStorePath(new File(clientKeystoreFile).getAbsolutePath());
+        config.clientKeyStorePath(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath());
         config.clientKeyStorePassword(CLIENT_CERT_PASSWORD);
-        config.clientTrustStorePath(new File(clientTruststoreFile).getAbsolutePath());
+        config.clientTrustStorePath(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath());
         config.clientTrustStorePassword(CLIENT_CERT_PASSWORD);
-        SERVER = new EmbeddedPulsarServer(config);
-        SERVER.start();
+        server = new EmbeddedPulsarServer(config);
+        server.start();
     }
 
     @AfterAll
     public static void teardown() throws Exception {
-        SERVER.close();
+        server.close();
     }
 }
