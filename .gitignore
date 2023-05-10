@@ -15,7 +15,6 @@
 
 # gradle
 .gradle/**
-gradle/**
 **/build/**
 
 # mvn shade plugin
