@@ -2,6 +2,7 @@ package io.github.protocol.pulsar.admin.jdk;
 
 import io.github.embedded.pulsar.core.EmbeddedPulsarConfig;
 import io.github.embedded.pulsar.core.EmbeddedPulsarServer;
+import io.github.protocol.pulsar.admin.api.TlsConfig;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -42,71 +43,93 @@ public class TlsClientTest {
         server.start();
     }
 
-    @Test
-    public void testTlsNoVerify() throws PulsarAdminException {
-        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
+    private PulsarAdmin createPulsarAdmin(TlsConfig tlsConfig) throws PulsarAdminException {
+        return PulsarAdmin.builder()
                 .port(server.getWebPort())
                 .useSsl(true)
-                .keyStorePath(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath())
-                .keyStorePassword(CLIENT_CERT_PASSWORD)
-                .disableSslVerify(true)
+                .tlsConfig(tlsConfig)
                 .build();
+    }
+
+    @Test
+    public void testTlsNoVerify() throws PulsarAdminException {
+        TlsConfig tlsConfig = new TlsConfig(
+                new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
+                CLIENT_CERT_PASSWORD.toCharArray(),
+                new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
+                CLIENT_CERT_PASSWORD.toCharArray(),
+                false,
+                true,
+                null,
+                null
+        );
+        PulsarAdmin pulsarAdmin = createPulsarAdmin(tlsConfig);
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
 
     @Test
     public void testTlsCustomProtocol() throws PulsarAdminException {
-        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
-                .port(server.getWebPort())
-                .useSsl(true)
-                .keyStorePath(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath())
-                .keyStorePassword(CLIENT_CERT_PASSWORD)
-                .disableSslVerify(true)
-                .tlsProtocols(new String[]{"TLSv1.2"})
-                .build();
+        TlsConfig tlsConfig = new TlsConfig(
+                new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
+                CLIENT_CERT_PASSWORD.toCharArray(),
+                new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
+                CLIENT_CERT_PASSWORD.toCharArray(),
+                false,
+                true,
+                new String[]{"TLSv1.2"},
+                null
+        );
+        PulsarAdmin pulsarAdmin = createPulsarAdmin(tlsConfig);
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
 
     @Test
     public void testTlsCustomCiphers() throws PulsarAdminException {
-        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
-                .port(server.getWebPort())
-                .useSsl(true)
-                .keyStorePath(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath())
-                .keyStorePassword(CLIENT_CERT_PASSWORD)
-                .disableSslVerify(true)
-                .tlsCiphers(new String[]{"ECDHE-ECDSA-AES128-GCM-SHA256", "ECDHE-RSA-AES128-GCM-SHA256",
+        TlsConfig tlsConfig = new TlsConfig(
+                new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
+                CLIENT_CERT_PASSWORD.toCharArray(),
+                new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
+                CLIENT_CERT_PASSWORD.toCharArray(),
+                false,
+                true,
+                null,
+                new String[]{"ECDHE-ECDSA-AES128-GCM-SHA256", "ECDHE-RSA-AES128-GCM-SHA256",
                         "ECDHE-ECDSA-AES256-GCM-SHA384", "ECDHE-RSA-AES256-GCM-SHA384", "ECDHE-ECDSA-CHACHA20-POLY1305",
-                        "ECDHE-RSA-CHACHA20-POLY1305", "DHE-RSA-AES128-GCM-SHA256", "DHE-RSA-AES256-GCM-SHA384"})
-                .build();
+                        "ECDHE-RSA-CHACHA20-POLY1305", "DHE-RSA-AES128-GCM-SHA256", "DHE-RSA-AES256-GCM-SHA384"}
+        );
+        PulsarAdmin pulsarAdmin = createPulsarAdmin(tlsConfig);
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
 
     @Test
     public void testTlsByVerifyAndNoHostnameVerification() throws PulsarAdminException {
-        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
-                .port(server.getWebPort())
-                .useSsl(true)
-                .keyStorePath(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath())
-                .keyStorePassword(CLIENT_CERT_PASSWORD)
-                .trustStorePath(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath())
-                .trustStorePassword(CLIENT_CERT_PASSWORD)
-                .disableSslVerify(false)
-                .build();
+        TlsConfig tlsConfig = new TlsConfig(
+                new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
+                CLIENT_CERT_PASSWORD.toCharArray(),
+                new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
+                CLIENT_CERT_PASSWORD.toCharArray(),
+                true,
+                false,
+                null,
+                null
+        );
+        PulsarAdmin pulsarAdmin = createPulsarAdmin(tlsConfig);
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
 
     @Test
     public void testTlsByVerifyAndHostnameVerification() throws PulsarAdminException {
-        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
-                .port(server.getWebPort())
-                .useSsl(true)
-                .keyStorePath(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath())
-                .keyStorePassword(CLIENT_CERT_PASSWORD)
-                .trustStorePath(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath())
-                .trustStorePassword(CLIENT_CERT_PASSWORD)
-                .disableSslVerify(false)
-                .build();
+        TlsConfig tlsConfig = new TlsConfig(
+                new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
+                CLIENT_CERT_PASSWORD.toCharArray(),
+                new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
+                CLIENT_CERT_PASSWORD.toCharArray(),
+                true,
+                true,
+                null,
+                null
+        );
+        PulsarAdmin pulsarAdmin = createPulsarAdmin(tlsConfig);
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
 

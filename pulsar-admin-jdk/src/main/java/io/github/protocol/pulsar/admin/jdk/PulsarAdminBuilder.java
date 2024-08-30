@@ -18,6 +18,8 @@
  */
 package io.github.protocol.pulsar.admin.jdk;
 
+import io.github.protocol.pulsar.admin.api.TlsConfig;
+
 public interface PulsarAdminBuilder {
     PulsarAdmin build();
 
@@ -27,18 +29,6 @@ public interface PulsarAdminBuilder {
 
     PulsarAdminBuilder useSsl(boolean useSsl);
 
-    PulsarAdminBuilder keyStorePath(String keyStorePath);
-
-    PulsarAdminBuilder keyStorePassword(String keyStorePassword);
-
-    PulsarAdminBuilder trustStorePath(String trustStorePath);
-
-    PulsarAdminBuilder trustStorePassword(String trustStorePassword);
-
-    PulsarAdminBuilder disableSslVerify(boolean disableSslVerify);
-
-    PulsarAdminBuilder tlsProtocols(String[] tlsProtocols);
-
-    PulsarAdminBuilder tlsCiphers(String[] tlsCiphers);
+    PulsarAdminBuilder tlsConfig(TlsConfig tlsConfig);
 
 }

@@ -1,10 +1,10 @@
 package io.github.protocol.pulsar.admin.jdk;
 
-public class PersistentTopicsImpl extends BaseTopicsImpl {
+public class PersistentTopics extends BaseTopicsImpl {
 
     private static final String BASE_URL_PERSISTENT_DOMAIN = "/admin/v2" + "/persistent";
 
-    public PersistentTopicsImpl(InnerHttpClient httpClient) {
+    public PersistentTopics(InnerHttpClient httpClient) {
         super(httpClient);
     }
 

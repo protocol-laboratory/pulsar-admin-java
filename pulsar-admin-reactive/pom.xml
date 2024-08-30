@@ -9,12 +9,12 @@
         <version>0.0.2</version>
     </parent>
 
-    <artifactId>pulsar-admin-reactor</artifactId>
+    <artifactId>pulsar-admin-reactive</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>io.github.protocol-laboratory</groupId>
-            <artifactId>pulsar-admin-api</artifactId>
+            <artifactId>pulsar-admin-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

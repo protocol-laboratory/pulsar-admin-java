@@ -18,6 +18,9 @@
  */
 package io.github.protocol.pulsar.admin.jdk;
 
+import io.github.protocol.pulsar.admin.api.Configuration;
+import io.github.protocol.pulsar.admin.api.TlsConfig;
+
 public class PulsarAdminBuilderImpl implements PulsarAdminBuilder {
     private final Configuration conf;
 
@@ -32,61 +35,25 @@ public class PulsarAdminBuilderImpl implements PulsarAdminBuilder {
 
     @Override
     public PulsarAdminBuilder host(String host) {
-        this.conf.setHost(host);
+        this.conf.host(host);
         return this;
     }
 
     @Override
     public PulsarAdminBuilder port(int port) {
-        this.conf.setPort(port);
+        this.conf.port(port);
         return this;
     }
 
     @Override
     public PulsarAdminBuilder useSsl(boolean useSsl) {
-        this.conf.setTlsEnabled(useSsl);
+        this.conf.tlsEnabled(useSsl);
         return this;
     }
 
     @Override
-    public PulsarAdminBuilder keyStorePath(String keyStorePath) {
-        this.conf.setKeyStorePath(keyStorePath);
-        return this;
-    }
-
-    @Override
-    public PulsarAdminBuilder keyStorePassword(String keyStorePassword) {
-        this.conf.setKeyStorePassword(keyStorePassword);
-        return this;
-    }
-
-    @Override
-    public PulsarAdminBuilder trustStorePath(String trustStorePath) {
-        this.conf.setTrustStorePath(trustStorePath);
-        return this;
-    }
-
-    @Override
-    public PulsarAdminBuilder trustStorePassword(String trustStorePassword) {
-        this.conf.setTrustStorePassword(trustStorePassword);
-        return this;
-    }
-
-    @Override
-    public PulsarAdminBuilder disableSslVerify(boolean disableSslVerify) {
-        this.conf.setDisableSslVerify(disableSslVerify);
-        return this;
-    }
-
-    @Override
-    public PulsarAdminBuilder tlsProtocols(String[] tlsProtocols) {
-        this.conf.setTlsProtocols(tlsProtocols);
-        return this;
-    }
-
-    @Override
-    public PulsarAdminBuilder tlsCiphers(String[] tlsCiphers) {
-        this.conf.setTlsCiphers(tlsCiphers);
+    public PulsarAdminBuilder tlsConfig(TlsConfig tlsConfig) {
+        this.conf.tlsConfig(tlsConfig);
         return this;
     }
 }

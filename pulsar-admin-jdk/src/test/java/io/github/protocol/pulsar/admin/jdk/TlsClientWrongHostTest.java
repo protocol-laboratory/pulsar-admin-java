@@ -20,6 +20,7 @@ package io.github.protocol.pulsar.admin.jdk;
 
 import io.github.embedded.pulsar.core.EmbeddedPulsarConfig;
 import io.github.embedded.pulsar.core.EmbeddedPulsarServer;
+import io.github.protocol.pulsar.admin.api.TlsConfig;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,14 +33,14 @@ public class TlsClientWrongHostTest {
     private static EmbeddedPulsarServer server;
 
     private static final String CLIENT_KEYSTORE_FILE =
-            TlsClientTest.class.getClassLoader().getResource("pulsar_client_key_wrong_host.jks").getFile();
+            TlsClientWrongHostTest.class.getClassLoader().getResource("pulsar_client_key_wrong_host.jks").getFile();
     private static final String CLIENT_TRUSTSTORE_FILE =
-            TlsClientTest.class.getClassLoader().getResource("pulsar_client_trust_wrong_host.jks").getFile();
+            TlsClientWrongHostTest.class.getClassLoader().getResource("pulsar_client_trust_wrong_host.jks").getFile();
 
     private static final String SERVER_KEYSTORE_FILE =
-            TlsClientTest.class.getClassLoader().getResource("pulsar_server_key_wrong_host.jks").getFile();
+            TlsClientWrongHostTest.class.getClassLoader().getResource("pulsar_server_key_wrong_host.jks").getFile();
     private static final String SERVER_TRUSTSTORE_FILE =
-            TlsClientTest.class.getClassLoader().getResource("pulsar_server_trust_wrong_host.jks").getFile();
+            TlsClientWrongHostTest.class.getClassLoader().getResource("pulsar_server_trust_wrong_host.jks").getFile();
 
     private static final String CLIENT_CERT_PASSWORD = "pulsar_client_pwd";
 
@@ -63,14 +64,20 @@ public class TlsClientWrongHostTest {
 
     @Test
     public void testTlsByVerifyAndNoHostnameVerification() throws PulsarAdminException {
+        TlsConfig tlsConfig = new TlsConfig(
+                new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
+                CLIENT_CERT_PASSWORD.toCharArray(),
+                new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
+                CLIENT_CERT_PASSWORD.toCharArray(),
+                false,
+                false,
+                null,
+                null
+        );
         PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
                 .port(server.getWebPort())
                 .useSsl(true)
-                .keyStorePath(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath())
-                .keyStorePassword(CLIENT_CERT_PASSWORD)
-                .trustStorePath(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath())
-                .trustStorePassword(CLIENT_CERT_PASSWORD)
-                .disableSslVerify(false)
+                .tlsConfig(tlsConfig)
                 .build();
         Assertions.assertThrows(PulsarAdminException.class, () -> pulsarAdmin.brokers().healthcheck(TopicVersion.V1));
     }

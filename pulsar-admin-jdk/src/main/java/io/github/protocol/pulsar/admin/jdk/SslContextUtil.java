@@ -18,6 +18,8 @@
  */
 package io.github.protocol.pulsar.admin.jdk;
 
+import io.github.protocol.pulsar.admin.api.TlsConfig;
+
 import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
@@ -28,31 +30,25 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
 public class SslContextUtil {
-    public static SSLContext buildFromJks(String keyStorePath,
-                                          String keyStorePassword,
-                                          String trustStorePath,
-                                          String trustStorePassword,
-                                          boolean disableSslVerify,
-                                          String[] tlsProtocols,
-                                          String[] tlsCiphers) {
+    public static SSLContext build(TlsConfig config) {
         try {
             // Load the key store
             KeyStore keyStore = KeyStore.getInstance("JKS");
-            try (FileInputStream keyStoreFile = new FileInputStream(keyStorePath)) {
-                keyStore.load(keyStoreFile, keyStorePassword.toCharArray());
+            try (FileInputStream keyStoreFile = new FileInputStream(config.keyStorePath)) {
+                keyStore.load(keyStoreFile, config.keyStorePassword);
             }
 
             // Set up key manager factory to use our key store
             String defaultKeyAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
             KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(defaultKeyAlgorithm);
-            keyManagerFactory.init(keyStore, keyStorePassword.toCharArray());
+            keyManagerFactory.init(keyStore, config.keyStorePassword);
 
             // Load the trust store, if specified
             TrustManagerFactory trustManagerFactory = null;
-            if (trustStorePath != null) {
+            if (config.trustStorePath != null) {
                 KeyStore trustStore = KeyStore.getInstance("JKS");
-                try (FileInputStream trustStoreFile = new FileInputStream(trustStorePath)) {
-                    trustStore.load(trustStoreFile, trustStorePassword.toCharArray());
+                try (FileInputStream trustStoreFile = new FileInputStream(config.trustStorePath)) {
+                    trustStore.load(trustStoreFile, config.trustStorePassword);
                 }
 
                 // Set up trust manager factory to use our trust store
@@ -64,8 +60,8 @@ public class SslContextUtil {
             SSLContext sslContext = SSLContext.getInstance("TLS");
 
             TrustManager[] trustManagers;
-            if (disableSslVerify) {
-                trustManagers = new TrustManager[] { new InsecureTrustManager() };
+            if (config.verifyDisabled) {
+                trustManagers = new TrustManager[]{new InsecureTrustManager()};
             } else if (trustManagerFactory != null) {
                 trustManagers = trustManagerFactory.getTrustManagers();
             } else {
@@ -76,11 +72,11 @@ public class SslContextUtil {
             sslContext.init(keyManagerFactory.getKeyManagers(), trustManagers, new SecureRandom());
 
             SSLParameters sslParameters = sslContext.getDefaultSSLParameters();
-            if (tlsProtocols != null && tlsProtocols.length != 0) {
-                sslParameters.setProtocols(tlsProtocols);
+            if (config.versions != null && config.versions.length != 0) {
+                sslParameters.setProtocols(config.versions);
             }
-            if (tlsCiphers != null && tlsCiphers.length != 0) {
-                sslParameters.setCipherSuites(tlsCiphers);
+            if (config.cipherSuites != null && config.cipherSuites.length != 0) {
+                sslParameters.setCipherSuites(config.cipherSuites);
             }
 
             return sslContext;
