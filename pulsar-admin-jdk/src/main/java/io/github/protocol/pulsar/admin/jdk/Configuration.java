@@ -29,7 +29,7 @@ public class Configuration {
 
     private int port;
 
-    public boolean useSsl = false;
+    public boolean tlsEnabled;
 
     public String keyStorePath;
 

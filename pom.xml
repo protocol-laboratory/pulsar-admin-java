@@ -6,11 +6,13 @@
 
     <groupId>io.github.protocol-laboratory</groupId>
     <artifactId>pulsar-admin-parent</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>pom</packaging>
 
     <modules>
+        <module>pulsar-admin-api</module>
         <module>pulsar-admin-jdk</module>
+        <module>pulsar-admin-reactor</module>
     </modules>
 
     <properties>
@@ -25,19 +27,22 @@
         <junit.version>5.11.0</junit.version>
         <log4j.version>2.20.0</log4j.version>
         <lombok.version>1.18.34</lombok.version>
-        <!-- plugin -->
-        <compiler-plugin.version>3.10.1</compiler-plugin.version>
-        <checkstyle-plugin.version>3.2.0</checkstyle-plugin.version>
-        <javadoc-plugin.version>3.4.1</javadoc-plugin.version>
-        <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
-        <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
-        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <puppycrawl.version>10.18.0</puppycrawl.version>
-        <release-plugin.version>3.0.0-M6</release-plugin.version>
-        <scm-provider-gitexe.version>2.1.0</scm-provider-gitexe.version>
-        <source-plugin.version>3.2.1</source-plugin.version>
-        <spotbugs-maven-plugin.version>4.7.2.0</spotbugs-maven-plugin.version>
-        <surefire-plugin.version>3.0.0-M9</surefire-plugin.version>
+        <reactor-netty.version>1.1.22</reactor-netty.version>
+        <!-- plugin -->
+        <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-checkstyle-plugin.version>3.5.0</maven-checkstyle-plugin.version>
+        <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
+        <maven-enforce-plugin-maven.version>3.8.0</maven-enforce-plugin-maven.version>
+        <maven-gpg-plugin.version>3.2.5</maven-gpg-plugin.version>
+        <maven-javadoc-plugin.version>3.10.0</maven-javadoc-plugin.version>
+        <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
+        <maven-scm-provider-gitexe.version>2.1.0</maven-scm-provider-gitexe.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-surefire-plugin.version>3.5.0</maven-surefire-plugin.version>
+        <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.8.6.2</spotbugs-maven-plugin.version>
         <spotless-maven-plugi.version>2.43.0</spotless-maven-plugi.version>
     </properties>
 
@@ -94,8 +99,28 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>${maven-enforce-plugin-maven.version}</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${compiler-plugin.version}</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
@@ -104,7 +129,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${checkstyle-plugin.version}</version>
+                <version>${maven-checkstyle-plugin.version}</version>
                 <dependencies>
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
@@ -141,7 +166,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire-plugin.version}</version>
+                <version>${maven-surefire-plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <useFile>false</useFile>
@@ -169,7 +194,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>${release-plugin.version}</version>
+                <version>${maven-release-plugin.version}</version>
                 <configuration>
                     <localCheckout>true</localCheckout>
                     <pushChanges>false</pushChanges>
@@ -180,14 +205,14 @@
                     <dependency>
                         <groupId>org.apache.maven.scm</groupId>
                         <artifactId>maven-scm-provider-gitexe</artifactId>
-                        <version>${scm-provider-gitexe.version}</version>
+                        <version>${maven-scm-provider-gitexe.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${javadoc-plugin.version}</version>
+                <version>${maven-javadoc-plugin.version}</version>
                 <configuration>
                     <sourcepath>${src.dir}</sourcepath>
                     <doclint>all,-missing</doclint>
@@ -204,7 +229,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>${source-plugin.version}</version>
+                <version>${maven-source-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
