@@ -31,7 +31,7 @@ public interface PulsarAdmin {
 
     Namespaces namespaces();
 
-    PersistentTopicsImpl persistentTopics();
+    PersistentTopics persistentTopics();
 
-    NonPersistentTopicsImpl nonPersistentTopics();
+    NonPersistentTopics nonPersistentTopics();
 }

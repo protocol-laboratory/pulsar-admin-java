@@ -16,37 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.github.protocol.pulsar.admin.jdk;
+package io.github.protocol.pulsar.admin.api;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
-@Setter
-@Getter
 public class Configuration {
-    private String host = "localhost";
+    public String host = "localhost";
 
-    private int port;
+    public int port;
 
     public boolean tlsEnabled;
 
-    public String keyStorePath;
-
-    @ToString.Exclude
-    public String keyStorePassword;
-
-    public String trustStorePath;
-
-    @ToString.Exclude
-    public String trustStorePassword;
-
-    public boolean disableSslVerify;
-
-    public String[] tlsProtocols;
-
-    public String[] tlsCiphers;
+    public TlsConfig tlsConfig;
 
     public Configuration() {
+    }
+
+    public Configuration host(String host) {
+        this.host = host;
+        return this;
+    }
+
+    public Configuration port(int port) {
+        this.port = port;
+        return this;
+    }
+
+    public Configuration tlsEnabled(boolean tlsEnabled) {
+        this.tlsEnabled = tlsEnabled;
+        return this;
+    }
+
+    public Configuration tlsConfig(TlsConfig tlsConfig) {
+        this.tlsConfig = tlsConfig;
+        return this;
     }
 }

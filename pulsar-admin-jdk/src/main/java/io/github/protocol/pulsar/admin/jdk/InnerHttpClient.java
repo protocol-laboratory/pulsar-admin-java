@@ -19,6 +19,8 @@
 package io.github.protocol.pulsar.admin.jdk;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.github.protocol.pulsar.admin.api.Configuration;
+import io.github.protocol.pulsar.admin.common.JacksonService;
 
 import java.io.IOException;
 import java.net.URI;
@@ -39,14 +41,12 @@ public class InnerHttpClient {
         this.conf = conf;
         HttpClient.Builder builder = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1);
-        if (conf.isTlsEnabled()) {
+        if (conf.tlsEnabled) {
             builder = builder
-                    .sslContext(SslContextUtil.buildFromJks(conf.keyStorePath, conf.keyStorePassword,
-                            conf.trustStorePath, conf.trustStorePassword, conf.disableSslVerify,
-                            conf.tlsProtocols, conf.tlsCiphers));
-            this.httpPrefix = "https://" + conf.getHost() + ":" + conf.getPort();
+                    .sslContext(SslContextUtil.build(conf.tlsConfig));
+            this.httpPrefix = "https://" + conf.host + ":" + conf.port;
         } else {
-            this.httpPrefix = "http://" + conf.getHost() + ":" + conf.getPort();
+            this.httpPrefix = "http://" + conf.host + ":" + conf.port;
         }
         this.client = builder.build();
     }

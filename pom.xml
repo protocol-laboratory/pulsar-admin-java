@@ -11,8 +11,9 @@
 
     <modules>
         <module>pulsar-admin-api</module>
+        <module>pulsar-admin-common</module>
         <module>pulsar-admin-jdk</module>
-        <module>pulsar-admin-reactor</module>
+        <module>pulsar-admin-reactive</module>
     </modules>
 
     <properties>

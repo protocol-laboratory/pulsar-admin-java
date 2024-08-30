@@ -18,6 +18,8 @@
  */
 package io.github.protocol.pulsar.admin.jdk;
 
+import io.github.protocol.pulsar.admin.api.Configuration;
+
 public class PulsarAdminImpl implements PulsarAdmin {
 
     private final Clusters clusters;
@@ -28,18 +30,18 @@ public class PulsarAdminImpl implements PulsarAdmin {
 
     private final Namespaces namespaces;
 
-    private final PersistentTopicsImpl persistentTopics;
+    private final PersistentTopics persistentTopics;
 
-    private final NonPersistentTopicsImpl nonPersistentTopics;
+    private final NonPersistentTopics nonPersistentTopics;
 
     PulsarAdminImpl(Configuration conf) {
         InnerHttpClient innerHttpClient = new InnerHttpClient(conf);
-        this.clusters = new ClustersImpl(innerHttpClient);
-        this.brokers = new BrokersImpl(innerHttpClient);
-        this.tenants = new TenantsImpl(innerHttpClient);
-        this.namespaces = new NamespacesImpl(innerHttpClient);
-        this.persistentTopics = new PersistentTopicsImpl(innerHttpClient);
-        this.nonPersistentTopics = new NonPersistentTopicsImpl(innerHttpClient);
+        this.clusters = new Clusters(innerHttpClient);
+        this.brokers = new Brokers(innerHttpClient);
+        this.tenants = new Tenants(innerHttpClient);
+        this.namespaces = new Namespaces(innerHttpClient);
+        this.persistentTopics = new PersistentTopics(innerHttpClient);
+        this.nonPersistentTopics = new NonPersistentTopics(innerHttpClient);
     }
 
     @Override
@@ -63,12 +65,12 @@ public class PulsarAdminImpl implements PulsarAdmin {
     }
 
     @Override
-    public PersistentTopicsImpl persistentTopics() {
+    public PersistentTopics persistentTopics() {
         return persistentTopics;
     }
 
     @Override
-    public NonPersistentTopicsImpl nonPersistentTopics() {
+    public NonPersistentTopics nonPersistentTopics() {
         return nonPersistentTopics;
     }
 }

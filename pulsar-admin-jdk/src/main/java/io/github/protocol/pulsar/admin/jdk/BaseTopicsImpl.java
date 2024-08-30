@@ -1,13 +1,14 @@
 package io.github.protocol.pulsar.admin.jdk;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.github.protocol.pulsar.admin.common.JacksonService;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.List;
 import java.util.Map;
 
-public abstract class BaseTopicsImpl implements Topics {
+public abstract class BaseTopicsImpl {
 
     protected final InnerHttpClient httpClient;
 
@@ -17,7 +18,6 @@ public abstract class BaseTopicsImpl implements Topics {
 
     protected abstract String getDomainBaseUrl();
 
-    @Override
     public void createPartitionedTopic(String tenant, String namespace, String encodedTopic, int numPartitions,
                                        boolean createLocalTopicOnly) throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic, "/partitions");
@@ -34,7 +34,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public void deletePartitionedTopic(String tenant, String namespace, String encodedTopic, boolean force,
                                        boolean authoritative) throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic, "/partitions");
@@ -51,7 +50,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public void updatePartitionedTopic(String tenant, String namespace, String encodedTopic,
                                        boolean updateLocalTopicOnly, boolean authoritative,
                                        boolean force, int numPartitions) throws PulsarAdminException {
@@ -71,7 +69,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public PartitionedTopicMetadata getPartitionedMetadata(String tenant, String namespace, String encodedTopic,
                                                            boolean checkAllowAutoCreation, boolean authoritative)
             throws PulsarAdminException {
@@ -91,7 +88,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public void createNonPartitionedTopic(String tenant, String namespace, String encodedTopic, boolean authoritative,
                                           Map<String, String> properties) throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s", getDomainBaseUrl(), tenant, namespace, encodedTopic);
@@ -108,7 +104,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public void deleteTopic(String tenant, String namespace, String encodedTopic, boolean force, boolean authoritative)
             throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s", getDomainBaseUrl(), tenant, namespace, encodedTopic);
@@ -126,7 +121,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public List<String> getList(String tenant, String namespace, String bundle, boolean includeSystemTopic)
             throws PulsarAdminException {
         String url = String.format("%s/%s/%s", getDomainBaseUrl(), tenant, namespace);
@@ -153,7 +147,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public List<String> getPartitionedTopicList(String tenant, String namespace, boolean includeSystemTopic)
             throws PulsarAdminException {
         String url = String.format("%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, UrlConst.PARTITIONED);
@@ -173,7 +166,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public void createMissedPartitions(String tenant, String namespace, String encodedTopic)
             throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
@@ -191,7 +183,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public MessageIdImpl getLastMessageId(String tenant, String namespace, String encodedTopic, boolean authoritative)
             throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
@@ -209,7 +200,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public RetentionPolicies getRetention(String tenant, String namespace, String encodedTopic, boolean isGlobal,
                                           boolean applied, boolean authoritative) throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
@@ -230,7 +220,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public void setRetention(String tenant, String namespace, String encodedTopic, boolean authoritative,
                              boolean isGlobal, RetentionPolicies retention) throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
@@ -249,7 +238,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public void removeRetention(String tenant, String namespace, String encodedTopic, boolean authoritative)
             throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
@@ -266,7 +254,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public Map<BacklogQuotaType, BacklogQuota> getBacklogQuotaMap(String tenant, String namespace,
                                                                   String encodedTopic, boolean applied,
                                                                   boolean authoritative, boolean isGlobal)
@@ -290,7 +277,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public void setBacklogQuota(String tenant, String namespace, String encodedTopic, boolean authoritative,
                                 boolean isGlobal, BacklogQuotaType backlogQuotaType, BacklogQuota backlogQuota)
             throws PulsarAdminException {
@@ -311,7 +297,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public void removeBacklogQuota(String tenant, String namespace, String encodedTopic,
                                    BacklogQuotaType backlogQuotaType, boolean authoritative, boolean isGlobal)
             throws PulsarAdminException {
@@ -332,7 +317,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public PersistentOfflineTopicStats getBacklog(String tenant, String namespace, String encodedTopic,
                                                   boolean authoritative) throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
@@ -350,7 +334,6 @@ public abstract class BaseTopicsImpl implements Topics {
         }
     }
 
-    @Override
     public long getBacklogSizeByMessageId(String tenant, String namespace, String encodedTopic, boolean authoritative,
                                           MessageIdImpl messageId) throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
