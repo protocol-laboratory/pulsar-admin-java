@@ -39,7 +39,7 @@ public class InnerHttpClient {
         this.conf = conf;
         HttpClient.Builder builder = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1);
-        if (conf.isUseSsl()) {
+        if (conf.isTlsEnabled()) {
             builder = builder
                     .sslContext(SslContextUtil.buildFromJks(conf.keyStorePath, conf.keyStorePassword,
                             conf.trustStorePath, conf.trustStorePassword, conf.disableSslVerify,

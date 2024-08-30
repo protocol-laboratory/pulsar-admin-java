@@ -44,7 +44,7 @@ public class PulsarAdminBuilderImpl implements PulsarAdminBuilder {
 
     @Override
     public PulsarAdminBuilder useSsl(boolean useSsl) {
-        this.conf.setUseSsl(useSsl);
+        this.conf.setTlsEnabled(useSsl);
         return this;
     }
 
