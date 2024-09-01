@@ -46,7 +46,7 @@ public class TlsClientTest {
     private PulsarAdmin createPulsarAdmin(TlsConfig tlsConfig) throws PulsarAdminException {
         return PulsarAdmin.builder()
                 .port(server.getWebPort())
-                .useSsl(true)
+                .tlsEnabled(true)
                 .tlsConfig(tlsConfig)
                 .build();
     }

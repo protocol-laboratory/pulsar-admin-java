@@ -9,7 +9,7 @@ public interface PulsarAdminBuilder {
 
     PulsarAdminBuilder port(int port);
 
-    PulsarAdminBuilder useSsl(boolean useSsl);
+    PulsarAdminBuilder tlsEnabled(boolean useSsl);
 
     PulsarAdminBuilder tlsConfig(TlsConfig tlsConfig);
 

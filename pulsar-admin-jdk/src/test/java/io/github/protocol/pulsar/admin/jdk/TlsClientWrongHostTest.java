@@ -58,7 +58,7 @@ public class TlsClientWrongHostTest {
         );
         PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
                 .port(server.getWebPort())
-                .useSsl(true)
+                .tlsEnabled(true)
                 .tlsConfig(tlsConfig)
                 .build();
         Assertions.assertThrows(PulsarAdminException.class, () -> pulsarAdmin.brokers().healthcheck(TopicVersion.V1));
