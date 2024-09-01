@@ -59,6 +59,16 @@ public class NonPersistentTopicsTest {
     }
 
     @Test
+    public void getPartitionedStatsTest() throws PulsarAdminException {
+        String namespace = RandomUtil.randomString();
+        String topic = RandomUtil.randomString();
+        pulsarAdmin.namespaces().createNamespace(tenant, namespace);
+        pulsarAdmin.nonPersistentTopics().createPartitionedTopic(tenant, namespace, topic, 2, false);
+        Assertions.assertNotNull(pulsarAdmin.nonPersistentTopics().getPartitionedStats(tenant, namespace,
+                topic, false));
+    }
+
+    @Test
     public void nonPartitionedTopicsTest() throws PulsarAdminException {
         String namespace = RandomUtil.randomString();
         String topic = RandomUtil.randomString();

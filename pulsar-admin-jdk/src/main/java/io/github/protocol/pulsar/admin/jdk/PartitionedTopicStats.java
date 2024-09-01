@@ -13,7 +13,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class PartitionedTopicStats extends TopicStats{
+public class PartitionedTopicStats extends TopicStats {
 
     public PartitionedTopicMetadata metadata;
 
