@@ -32,7 +32,7 @@ public class SubscriptionStats {
 
     public int chunkedMessageRate;
 
-    public int msgBacklog;
+    public long msgBacklog;
 
     public long backlogSize;
 
