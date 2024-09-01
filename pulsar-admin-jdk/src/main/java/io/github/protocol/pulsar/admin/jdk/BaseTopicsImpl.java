@@ -5,6 +5,7 @@ import io.github.protocol.pulsar.admin.common.JacksonService;
 
 import java.io.IOException;
 import java.net.http.HttpResponse;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +65,28 @@ public abstract class BaseTopicsImpl {
                         String.format("failed to update partitioned topic %s/%s/%s, status code %s, body : %s",
                                 tenant, namespace, encodedTopic, response.statusCode(), response.body()));
             }
+        } catch (IOException | InterruptedException e) {
+            throw new PulsarAdminException(e);
+        }
+    }
+
+    public PartitionedTopicStats getPartitionedStats(String tenant, String namespace, String encodedTopic,
+                                                           boolean perPartition)
+            throws PulsarAdminException {
+        String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace,
+                encodedTopic, "/partitioned-stats");
+        try {
+            HttpResponse<String> response = httpClient.get(url, "perPartition",
+                    Arrays.toString(new Object[] {perPartition}), "getPreciseBacklog",
+                    Arrays.toString(new Object[] {false}), "subscriptionBacklogSize",
+                    Arrays.toString(new Object[] {false}),
+                    "getEarliestTimeInBacklog", Arrays.toString(new Object[] {false}));
+            if (response.statusCode() != 200) {
+                throw new PulsarAdminException(
+                        String.format("failed to get partitioned stats of topic %s/%s/%s, status code %s, body : %s",
+                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+            }
+            return JacksonService.toObject(response.body(), PartitionedTopicStats.class);
         } catch (IOException | InterruptedException e) {
             throw new PulsarAdminException(e);
         }

@@ -192,4 +192,13 @@ public class PersistentTopicsTest {
                 false, false, false));
     }
 
+    @Test
+    public void getPartitionedStatsTest() throws PulsarAdminException {
+        String namespace = RandomUtil.randomString();
+        String topic = RandomUtil.randomString();
+        pulsarAdmin.namespaces().createNamespace(tenant, namespace);
+        pulsarAdmin.persistentTopics().createPartitionedTopic(tenant, namespace, topic, 2, false);
+        Assertions.assertNotNull(pulsarAdmin.persistentTopics().getPartitionedStats(tenant, namespace, topic, false));
+    }
+
 }
