@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.protocol-laboratory</groupId>
+        <artifactId>pulsar-admin-parent</artifactId>
+        <version>0.1.0</version>
+    </parent>
+
+    <artifactId>pulsar-spring-parent</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>pulsar-spring</module>
+        <module>pulsar-spring-boot-starter</module>
+        <module>pulsar-spring-boot-starter-reactor</module>
+    </modules>
+
+</project>
