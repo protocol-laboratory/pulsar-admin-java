@@ -1,4 +1,7 @@
 # pulsar-admin-java
+
+![License](https://img.shields.io/badge/license-Apache2.0-green) ![Language](https://img.shields.io/badge/language-Java-blue.svg) [![version](https://img.shields.io/github/v/tag/protocol-laboratory/pulsar-admin-java?label=release&color=blue)](https://github.com/protocol-laboratory/pulsar-admin-java/releases) [![codecov](https://codecov.io/gh/protocol-laboratory/pulsar-admin-java/branch/main/graph/badge.svg)](https://codecov.io/gh/protocol-laboratory/pulsar-admin-java)
+
 This is a simple alternative to pulsar-admin built using the built-in HTTP client of the JDK. It minimizes project dependencies and requires a minimum of JDK 17.
 
 Features:
