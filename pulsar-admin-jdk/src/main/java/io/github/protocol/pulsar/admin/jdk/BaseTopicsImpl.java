@@ -1,13 +1,14 @@
 package io.github.protocol.pulsar.admin.jdk;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.github.openfacade.http.HttpResponse;
 import io.github.protocol.pulsar.admin.common.JacksonService;
 
 import java.io.IOException;
-import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public abstract class BaseTopicsImpl {
 
@@ -23,14 +24,14 @@ public abstract class BaseTopicsImpl {
                                        boolean createLocalTopicOnly) throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic, "/partitions");
         try {
-            HttpResponse<String> response = httpClient.put(url, numPartitions, "createLocalTopicOnly",
+            HttpResponse response = httpClient.put(url, numPartitions, "createLocalTopicOnly",
                     String.valueOf(createLocalTopicOnly));
             if (response.statusCode() != 204) {
                 throw new PulsarAdminException(
                         String.format("failed to create partitioned topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
@@ -39,14 +40,14 @@ public abstract class BaseTopicsImpl {
                                        boolean authoritative) throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic, "/partitions");
         try {
-            HttpResponse<String> response = httpClient.delete(url, "force", String.valueOf(force),
+            HttpResponse response = httpClient.delete(url, "force", String.valueOf(force),
                     "authoritative", String.valueOf(authoritative));
             if (response.statusCode() != 204) {
                 throw new PulsarAdminException(
                         String.format("failed to delete partitioned topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -56,16 +57,16 @@ public abstract class BaseTopicsImpl {
                                        boolean force, int numPartitions) throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic, "/partitions");
         try {
-            HttpResponse<String> response = httpClient.post(url, numPartitions, "updateLocalTopicOnly",
+            HttpResponse response = httpClient.post(url, numPartitions, "updateLocalTopicOnly",
                     String.valueOf(updateLocalTopicOnly),
                     "authoritative", String.valueOf(authoritative),
                     "force", String.valueOf(force));
             if (response.statusCode() != 204) {
                 throw new PulsarAdminException(
                         String.format("failed to update partitioned topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -76,7 +77,7 @@ public abstract class BaseTopicsImpl {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace,
                 encodedTopic, "/partitioned-stats");
         try {
-            HttpResponse<String> response = httpClient.get(url, "perPartition",
+            HttpResponse response = httpClient.get(url, "perPartition",
                     Arrays.toString(new Object[] {perPartition}), "getPreciseBacklog",
                     Arrays.toString(new Object[] {false}), "subscriptionBacklogSize",
                     Arrays.toString(new Object[] {false}),
@@ -84,10 +85,10 @@ public abstract class BaseTopicsImpl {
             if (response.statusCode() != 200) {
                 throw new PulsarAdminException(
                         String.format("failed to get partitioned stats of topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
             return JacksonService.toObject(response.body(), PartitionedTopicStats.class);
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -97,16 +98,16 @@ public abstract class BaseTopicsImpl {
             throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic, "/partitions");
         try {
-            HttpResponse<String> response = httpClient.get(url,
+            HttpResponse response = httpClient.get(url,
                     "checkAllowAutoCreation", String.valueOf(checkAllowAutoCreation),
                     "authoritative", String.valueOf(authoritative));
             if (response.statusCode() != 200) {
                 throw new PulsarAdminException(
                         String.format("failed to update partitioned topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
             return JacksonService.toObject(response.body(), PartitionedTopicMetadata.class);
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -115,14 +116,14 @@ public abstract class BaseTopicsImpl {
                                           Map<String, String> properties) throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s", getDomainBaseUrl(), tenant, namespace, encodedTopic);
         try {
-            HttpResponse<String> response = httpClient.put(url, properties,
+            HttpResponse response = httpClient.put(url, properties,
                     "authoritative", String.valueOf(authoritative));
             if (response.statusCode() != 204) {
                 throw new PulsarAdminException(
                         String.format("failed to create non-partitioned topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -131,24 +132,24 @@ public abstract class BaseTopicsImpl {
             throws PulsarAdminException {
         String url = String.format("%s/%s/%s/%s", getDomainBaseUrl(), tenant, namespace, encodedTopic);
         try {
-            HttpResponse<String> response = httpClient.delete(url,
+            HttpResponse response = httpClient.delete(url,
                     "force", String.valueOf(force),
                     "authoritative", String.valueOf(authoritative));
             if (response.statusCode() != 204) {
                 throw new PulsarAdminException(
                         String.format("failed to delete non-partitioned topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
 
-    public List<String> getList(String tenant, String namespace, String bundle, boolean includeSystemTopic)
+    public List getList(String tenant, String namespace, String bundle, boolean includeSystemTopic)
             throws PulsarAdminException {
         String url = String.format("%s/%s/%s", getDomainBaseUrl(), tenant, namespace);
         try {
-            HttpResponse<String> response;
+            HttpResponse response;
             if (bundle != null) {
                 response = httpClient.get(url,
                         "bundle", bundle,
@@ -161,30 +162,30 @@ public abstract class BaseTopicsImpl {
                 throw new PulsarAdminException(
                         String.format("failed to get list of non-partitioned-topics "
                                         + "under namespace %s/%s, status code %s, body : %s",
-                                tenant, namespace, response.statusCode(), response.body()));
+                                tenant, namespace, response.statusCode(), response.bodyAsString()));
             }
-            return JacksonService.toRefer(response.body(), new TypeReference<List<String>>() {
+            return JacksonService.toRefer(response.body(), new TypeReference<>() {
             });
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
 
-    public List<String> getPartitionedTopicList(String tenant, String namespace, boolean includeSystemTopic)
+    public List getPartitionedTopicList(String tenant, String namespace, boolean includeSystemTopic)
             throws PulsarAdminException {
         String url = String.format("%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, UrlConst.PARTITIONED);
         try {
-            HttpResponse<String> response = httpClient.get(url, "includeSystemTopic",
+            HttpResponse response = httpClient.get(url, "includeSystemTopic",
                     String.valueOf(includeSystemTopic));
             if (response.statusCode() != 200) {
                 throw new PulsarAdminException(
                         String.format("failed to get list of partitioned-topics under namespace %s/%s, "
                                         + "status code %s, body : %s",
-                                tenant, namespace, response.statusCode(), response.body()));
+                                tenant, namespace, response.statusCode(), response.bodyAsString()));
             }
-            return JacksonService.toRefer(response.body(), new TypeReference<List<String>>() {
+            return JacksonService.toRefer(response.body(), new TypeReference<>() {
             });
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -194,14 +195,14 @@ public abstract class BaseTopicsImpl {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
                 UrlConst.CREATE_MISSED_PARTITIONS);
         try {
-            HttpResponse<String> response = httpClient.post(url);
+            HttpResponse response = httpClient.post(url);
             if (response.statusCode() != 204) {
                 throw new PulsarAdminException(
                         String.format("failed to create missing partitions for topic %s/%s/%s, "
                                         + "status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -211,14 +212,14 @@ public abstract class BaseTopicsImpl {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
                 UrlConst.LAST_MESSAGE_ID);
         try {
-            HttpResponse<String> response = httpClient.get(url, "authoritative", String.valueOf(authoritative));
+            HttpResponse response = httpClient.get(url, "authoritative", String.valueOf(authoritative));
             if (response.statusCode() != 200) {
                 throw new PulsarAdminException(
                         String.format("failed to get last message id of topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
             return JacksonService.toObject(response.body(), MessageIdImpl.class);
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -228,17 +229,17 @@ public abstract class BaseTopicsImpl {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
                 UrlConst.RETENTION);
         try {
-            HttpResponse<String> response = httpClient.get(url,
+            HttpResponse response = httpClient.get(url,
                     "isGlobal", String.valueOf(isGlobal),
                     "applied", String.valueOf(applied),
                     "authoritative", String.valueOf(authoritative));
             if (response.statusCode() != 200) {
                 throw new PulsarAdminException(
                         String.format("failed to get retention of topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
             return JacksonService.toObject(response.body(), RetentionPolicies.class);
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -248,15 +249,15 @@ public abstract class BaseTopicsImpl {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
                 UrlConst.RETENTION);
         try {
-            HttpResponse<String> response = httpClient.post(url, retention,
+            HttpResponse response = httpClient.post(url, retention,
                     "authoritative", String.valueOf(authoritative),
                     "isGlobal", String.valueOf(isGlobal));
             if (response.statusCode() != 204) {
                 throw new PulsarAdminException(
                         String.format("failed to set retention for topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -266,13 +267,13 @@ public abstract class BaseTopicsImpl {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
                 UrlConst.RETENTION);
         try {
-            HttpResponse<String> response = httpClient.delete(url, "authoritative", String.valueOf(authoritative));
+            HttpResponse response = httpClient.delete(url, "authoritative", String.valueOf(authoritative));
             if (response.statusCode() != 204) {
                 throw new PulsarAdminException(
                         String.format("failed to delete retention of topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -284,18 +285,18 @@ public abstract class BaseTopicsImpl {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
                 UrlConst.BACKLOG_QUOTA_MAP);
         try {
-            HttpResponse<String> response = httpClient.get(url,
+            HttpResponse response = httpClient.get(url,
                     "applied", String.valueOf(applied),
                     "authoritative", String.valueOf(authoritative),
                     "isGlobal", String.valueOf(isGlobal));
             if (response.statusCode() != 200) {
                 throw new PulsarAdminException(
                         String.format("failed to get backlog quota map of topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
             return JacksonService.toRefer(response.body(), new TypeReference<Map<BacklogQuotaType, BacklogQuota>>() {
             });
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -306,16 +307,16 @@ public abstract class BaseTopicsImpl {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
                 UrlConst.BACKLOG_QUOTA);
         try {
-            HttpResponse<String> response = httpClient.post(url, backlogQuota,
+            HttpResponse response = httpClient.post(url, backlogQuota,
                     "authoritative", String.valueOf(authoritative),
                     "isGlobal", String.valueOf(isGlobal),
                     "backlogQuotaType", String.valueOf(backlogQuotaType));
             if (response.statusCode() != 204) {
                 throw new PulsarAdminException(
                         String.format("failed to set backlog quota for topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -326,16 +327,16 @@ public abstract class BaseTopicsImpl {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
                 UrlConst.BACKLOG_QUOTA);
         try {
-            HttpResponse<String> response = httpClient.delete(url,
+            HttpResponse response = httpClient.delete(url,
                     "backlogQuotaType", String.valueOf(backlogQuotaType),
                     "authoritative", String.valueOf(authoritative),
                     "isGlobal", String.valueOf(isGlobal));
             if (response.statusCode() != 204) {
                 throw new PulsarAdminException(
                         String.format("failed to remove backlog quota of topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -345,14 +346,14 @@ public abstract class BaseTopicsImpl {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
                 UrlConst.BACKLOG);
         try {
-            HttpResponse<String> response = httpClient.get(url, "authoritative", String.valueOf(authoritative));
+            HttpResponse response = httpClient.get(url, "authoritative", String.valueOf(authoritative));
             if (response.statusCode() != 200) {
                 throw new PulsarAdminException(
                         String.format("failed to get backlog of topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
             return JacksonService.toObject(response.body(), PersistentOfflineTopicStats.class);
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }
@@ -362,15 +363,15 @@ public abstract class BaseTopicsImpl {
         String url = String.format("%s/%s/%s/%s%s", getDomainBaseUrl(), tenant, namespace, encodedTopic,
                 UrlConst.BACKLOG_SIZE);
         try {
-            HttpResponse<String> response = httpClient.put(url, messageId, "authoritative",
+            HttpResponse response = httpClient.put(url, messageId, "authoritative",
                     String.valueOf(authoritative));
             if (response.statusCode() != 200) {
                 throw new PulsarAdminException(
                         String.format("failed to get backlog size of topic %s/%s/%s, status code %s, body : %s",
-                                tenant, namespace, encodedTopic, response.statusCode(), response.body()));
+                                tenant, namespace, encodedTopic, response.statusCode(), response.bodyAsString()));
             }
             return JacksonService.toObject(response.body(), Long.class);
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }
     }

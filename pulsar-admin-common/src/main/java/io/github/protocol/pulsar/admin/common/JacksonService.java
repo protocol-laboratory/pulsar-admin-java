@@ -7,7 +7,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.List;
 
 public class JacksonService {
@@ -18,26 +21,26 @@ public class JacksonService {
         MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public static String toJson(Object o) throws JsonProcessingException {
-        return MAPPER.writeValueAsString(o);
+    public static byte[] toBytes(@Nullable Object o) throws JsonProcessingException {
+        return o == null ? null : MAPPER.writeValueAsBytes(o);
     }
 
-    public static <T> T toObject(String json, Class<T> type) throws JsonProcessingException {
-        if (json == null || json.isEmpty()) {
+    public static <T> T toObject(@Nullable byte[] json, @NotNull Class<T> type) throws IOException {
+        if (json == null || json.length == 0) {
             return null;
         }
         return MAPPER.readValue(json, type);
     }
 
-    public static <T> T toRefer(String json, TypeReference<T> ref) throws JsonProcessingException {
-        if (json == null || json.isEmpty()) {
+    public static <T> T toRefer(byte[] json, TypeReference<T> ref) throws IOException {
+        if (json == null || json.length == 0) {
             return null;
         }
         return MAPPER.readValue(json, ref);
     }
 
-    public static <T> List<T> toList(String json, TypeReference<List<T>> typeRef) throws JsonProcessingException {
-        if (json == null || json.isEmpty()) {
+    public static <T> List<T> toList(byte[] json, TypeReference<List<T>> typeRef) throws IOException {
+        if (json == null || json.length == 0) {
             return List.of();
         }
         return MAPPER.readValue(json, typeRef);
