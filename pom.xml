@@ -10,9 +10,9 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>pulsar-admin</module>
         <module>pulsar-admin-api</module>
         <module>pulsar-admin-common</module>
-        <module>pulsar-admin-jdk</module>
         <module>pulsar-admin-reactive</module>
         <module>spring</module>
     </modules>

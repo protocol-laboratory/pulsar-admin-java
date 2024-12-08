@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.protocol-laboratory</groupId>
-            <artifactId>pulsar-admin-jdk</artifactId>
+            <artifactId>pulsar-admin</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
