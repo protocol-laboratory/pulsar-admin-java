@@ -1,6 +1,6 @@
 package io.github.protocol.pulsar.admin.jdk;
 
-import java.net.http.HttpResponse;
+import io.github.openfacade.http.HttpResponse;
 
 public class Brokers {
     private final InnerHttpClient innerHttpClient;
@@ -15,12 +15,12 @@ public class Brokers {
             url += "?topicVersion=" + topicVersion;
         }
         try {
-            HttpResponse<String> httpResponse = innerHttpClient.get(url);
+            HttpResponse httpResponse = innerHttpClient.get(url);
             if (httpResponse.statusCode() != 200) {
                 throw new PulsarAdminException("healthcheck failed, status code: " + httpResponse.statusCode(),
                         httpResponse.statusCode());
             }
-            if (!httpResponse.body().equals("ok")) {
+            if (!httpResponse.bodyAsString().equals("ok")) {
                 throw new PulsarAdminException("healthcheck failed, body: " + httpResponse.body());
             }
         } catch (Exception e) {

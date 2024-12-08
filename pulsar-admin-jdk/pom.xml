@@ -17,6 +17,11 @@
             <artifactId>pulsar-admin-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.openfacade</groupId>
+            <artifactId>http-facade</artifactId>
+            <version>${http-facade.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
