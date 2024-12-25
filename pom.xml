@@ -33,8 +33,8 @@
         <lombok.version>1.18.34</lombok.version>
         <puppycrawl.version>10.18.0</puppycrawl.version>
         <reactor-netty.version>1.1.22</reactor-netty.version>
-        <spring.version>6.0.19</spring.version>
-        <spring-boot.version>3.1.11</spring-boot.version>
+        <spring.version>6.1.12</spring.version>
+        <spring-boot.version>3.2.9</spring-boot.version>
         <!-- plugin -->
         <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
