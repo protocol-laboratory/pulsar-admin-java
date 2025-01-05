@@ -76,7 +76,7 @@ public class Tenants {
                 throw new PulsarAdminException(String.format("failed to get list of tenant, status code %s, body : %s",
                         response.statusCode(), response.bodyAsString()));
             }
-            return JacksonService.toList(response.body(), new TypeReference<>() {});
+            return JacksonService.toList(response.body(), new TypeReference<List<String>>() {});
         } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }

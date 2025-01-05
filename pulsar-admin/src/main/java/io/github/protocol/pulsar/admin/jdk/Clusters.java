@@ -24,7 +24,7 @@ public class Clusters {
                         String.format("failed to get list of clusters, "
                                         + "status code %s, body : %s", response.statusCode(), response.body()));
             }
-            return JacksonService.toRefer(response.body(), new TypeReference<>() {});
+            return JacksonService.toRefer(response.body(), new TypeReference<List<String>>() {});
         } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
         }

@@ -6,9 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class TenantsTest {
 
@@ -33,19 +32,19 @@ public class TenantsTest {
     public void tenantsTest() throws PulsarAdminException {
         String tenantName = RandomUtil.randomString();
         TenantInfo initialTenantInfo = (new TenantInfo.TenantInfoBuilder())
-                .adminRoles(new HashSet<>(0))
-                .allowedClusters(Set.of(CLUSTER_STANDALONE)).build();
+            .adminRoles(new HashSet<>(0))
+            .allowedClusters(new HashSet<>(Arrays.asList(CLUSTER_STANDALONE))).build();
         TenantInfo updatedTenantInfo = (new TenantInfo.TenantInfoBuilder())
-                .adminRoles(Set.of("test"))
-                .allowedClusters(Set.of("global"))
+                .adminRoles(new HashSet<>(Arrays.asList("test")))
+                .allowedClusters(new HashSet<>(Arrays.asList(("global"))))
                 .build();
         pulsarAdmin.tenants().createTenant(tenantName, initialTenantInfo);
-        Assertions.assertEquals(List.of(tenantName, "public", "pulsar"), pulsarAdmin.tenants().getTenants());
+        Assertions.assertEquals(Arrays.asList(tenantName, "public", "pulsar"), pulsarAdmin.tenants().getTenants());
         Assertions.assertEquals(initialTenantInfo, pulsarAdmin.tenants().getTenantAdmin(tenantName));
         pulsarAdmin.tenants().updateTenant(tenantName, updatedTenantInfo);
         Assertions.assertEquals(updatedTenantInfo, pulsarAdmin.tenants().getTenantAdmin(tenantName));
         pulsarAdmin.tenants().deleteTenant(tenantName, false);
-        Assertions.assertEquals(List.of("public", "pulsar"), pulsarAdmin.tenants().getTenants());
+        Assertions.assertEquals(Arrays.asList("public", "pulsar"), pulsarAdmin.tenants().getTenants());
     }
 
 }

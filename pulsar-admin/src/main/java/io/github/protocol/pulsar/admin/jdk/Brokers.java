@@ -21,7 +21,7 @@ public class Brokers {
                         httpResponse.statusCode());
             }
             if (!httpResponse.bodyAsString().equals("ok")) {
-                throw new PulsarAdminException("healthcheck failed, body: " + httpResponse.body());
+                throw new PulsarAdminException("healthcheck failed, body: " + httpResponse.bodyAsString());
             }
         } catch (Exception e) {
             throw new PulsarAdminException(e);

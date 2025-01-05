@@ -164,7 +164,7 @@ public abstract class BaseTopicsImpl {
                                         + "under namespace %s/%s, status code %s, body : %s",
                                 tenant, namespace, response.statusCode(), response.bodyAsString()));
             }
-            return JacksonService.toRefer(response.body(), new TypeReference<>() {
+            return JacksonService.toRefer(response.body(), new TypeReference<List<String>>() {
             });
         } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
@@ -183,7 +183,7 @@ public abstract class BaseTopicsImpl {
                                         + "status code %s, body : %s",
                                 tenant, namespace, response.statusCode(), response.bodyAsString()));
             }
-            return JacksonService.toRefer(response.body(), new TypeReference<>() {
+            return JacksonService.toRefer(response.body(), new TypeReference<List<String>>() {
             });
         } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);

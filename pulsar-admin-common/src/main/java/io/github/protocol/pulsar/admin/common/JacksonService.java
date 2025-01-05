@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JacksonService {
@@ -41,7 +42,7 @@ public class JacksonService {
 
     public static <T> List<T> toList(byte[] json, TypeReference<List<T>> typeRef) throws IOException {
         if (json == null || json.length == 0) {
-            return List.of();
+            return new ArrayList<>();
         }
         return MAPPER.readValue(json, typeRef);
     }

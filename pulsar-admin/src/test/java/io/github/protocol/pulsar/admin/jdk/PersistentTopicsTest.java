@@ -1,5 +1,6 @@
 package io.github.protocol.pulsar.admin.jdk;
 
+import com.google.common.collect.ImmutableMap;
 import io.github.embedded.pulsar.core.EmbeddedPulsarServer;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
@@ -7,10 +8,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 public class PersistentTopicsTest {
@@ -28,8 +27,8 @@ public class PersistentTopicsTest {
         SERVER.start();
         pulsarAdmin = PulsarAdmin.builder().port(SERVER.getWebPort()).build();
         TenantInfo initialTenantInfo = (new TenantInfo.TenantInfoBuilder())
-                .adminRoles(new HashSet<>(0))
-                .allowedClusters(Set.of(CLUSTER_STANDALONE)).build();
+            .adminRoles(new HashSet<>(0))
+            .allowedClusters(new HashSet<>(Arrays.asList(CLUSTER_STANDALONE))).build();
         pulsarAdmin.tenants().createTenant(tenant, initialTenantInfo);
     }
 
@@ -44,29 +43,29 @@ public class PersistentTopicsTest {
         String topic = RandomUtil.randomString();
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
         pulsarAdmin.persistentTopics().createPartitionedTopic(tenant, namespace, topic, 2, false);
-        Assertions.assertEquals(List.of(String.format("persistent://%s/%s/%s", tenant, namespace, topic)),
+        Assertions.assertEquals(Arrays.asList(String.format("persistent://%s/%s/%s", tenant, namespace, topic)),
                 pulsarAdmin.persistentTopics().getPartitionedTopicList(tenant, namespace, false));
         Assertions.assertEquals(2, pulsarAdmin.persistentTopics().getPartitionedMetadata(tenant, namespace,
                 topic, false, false).getPartitions());
         Assertions.assertEquals(
-                List.of(String.format("persistent://%s/%s/%s-partition-0", tenant, namespace, topic),
+                Arrays.asList(String.format("persistent://%s/%s/%s-partition-0", tenant, namespace, topic),
                         String.format("persistent://%s/%s/%s-partition-1", tenant, namespace, topic)),
                 pulsarAdmin.persistentTopics().getList(tenant, namespace, null, false));
         pulsarAdmin.persistentTopics().updatePartitionedTopic(tenant, namespace, topic, false, false, false, 3);
-        Assertions.assertEquals(List.of(String.format("persistent://%s/%s/%s", tenant, namespace, topic)),
+        Assertions.assertEquals(Arrays.asList(String.format("persistent://%s/%s/%s", tenant, namespace, topic)),
                 pulsarAdmin.persistentTopics().getPartitionedTopicList(tenant, namespace, false));
         Assertions.assertEquals(3, pulsarAdmin.persistentTopics().getPartitionedMetadata(tenant, namespace,
                 topic, false, false).getPartitions());
         Assertions.assertEquals(
-                List.of(String.format("persistent://%s/%s/%s-partition-0", tenant, namespace, topic),
+                Arrays.asList(String.format("persistent://%s/%s/%s-partition-0", tenant, namespace, topic),
                         String.format("persistent://%s/%s/%s-partition-1", tenant, namespace, topic),
                         String.format("persistent://%s/%s/%s-partition-2", tenant, namespace, topic)),
                 pulsarAdmin.persistentTopics().getList(tenant, namespace, null, false));
         pulsarAdmin.persistentTopics().deletePartitionedTopic(tenant, namespace, topic, false, false);
-        Assertions.assertEquals(List.of(),
+        Assertions.assertEquals(Arrays.asList(),
                 pulsarAdmin.persistentTopics().getPartitionedTopicList(tenant, namespace, false));
         Assertions.assertEquals(
-                List.of(),
+                Arrays.asList(),
                 pulsarAdmin.persistentTopics().getList(tenant, namespace, null, false));
 
     }
@@ -78,11 +77,11 @@ public class PersistentTopicsTest {
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
         pulsarAdmin.persistentTopics().createNonPartitionedTopic(tenant, namespace, topic, false, null);
         Assertions.assertEquals(
-                List.of(String.format("persistent://%s/%s/%s", tenant, namespace, topic)),
+                Arrays.asList(String.format("persistent://%s/%s/%s", tenant, namespace, topic)),
                 pulsarAdmin.persistentTopics().getList(tenant, namespace, null, false));
         pulsarAdmin.persistentTopics().deleteTopic(tenant, namespace, topic, false, false);
         Assertions.assertEquals(
-                List.of(),
+                Arrays.asList(),
                 pulsarAdmin.persistentTopics().getList(tenant, namespace, null, false));
     }
 
@@ -93,16 +92,16 @@ public class PersistentTopicsTest {
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
         pulsarAdmin.persistentTopics().createPartitionedTopic(tenant, namespace, topic, 2, false);
         Assertions.assertEquals(
-                List.of(String.format("persistent://%s/%s/%s-partition-0", tenant, namespace, topic),
+                Arrays.asList(String.format("persistent://%s/%s/%s-partition-0", tenant, namespace, topic),
                         String.format("persistent://%s/%s/%s-partition-1", tenant, namespace, topic)),
                 pulsarAdmin.persistentTopics().getList(tenant, namespace, null, false));
         pulsarAdmin.persistentTopics().deleteTopic(tenant, namespace, topic + "-partition-1", false, false);
         Assertions.assertEquals(
-                List.of(String.format("persistent://%s/%s/%s-partition-0", tenant, namespace, topic)),
+                Arrays.asList(String.format("persistent://%s/%s/%s-partition-0", tenant, namespace, topic)),
                 pulsarAdmin.persistentTopics().getList(tenant, namespace, null, false));
         pulsarAdmin.persistentTopics().createMissedPartitions(tenant, namespace, topic);
         Assertions.assertEquals(
-                List.of(String.format("persistent://%s/%s/%s-partition-0", tenant, namespace, topic),
+                Arrays.asList(String.format("persistent://%s/%s/%s-partition-0", tenant, namespace, topic),
                         String.format("persistent://%s/%s/%s-partition-1", tenant, namespace, topic)),
                 pulsarAdmin.persistentTopics().getList(tenant, namespace, null, false));
     }
@@ -140,21 +139,22 @@ public class PersistentTopicsTest {
 
         //wait for metadata refresh
 
-        Awaitility.await().until(() -> Map.of(BacklogQuotaType.destination_storage, backlogQuota1)
-                .equals(new TreeMap<>(pulsarAdmin.persistentTopics().getBacklogQuotaMap(tenant, namespace, topic, false,
-                        false, false))));
-        pulsarAdmin.persistentTopics().setBacklogQuota(tenant, namespace, topic, false, false,
-                BacklogQuotaType.message_age, backlogQuota2);
+        Awaitility.await().until(() -> ImmutableMap.of(BacklogQuotaType.destination_storage, backlogQuota1).equals(
+            new TreeMap<>(
+                pulsarAdmin.persistentTopics().getBacklogQuotaMap(tenant, namespace, topic, false, false, false))));
+        pulsarAdmin.persistentTopics()
+                   .setBacklogQuota(tenant, namespace, topic, false, false, BacklogQuotaType.message_age,
+                       backlogQuota2);
 
         //wait for metadata refresh
 
-        Awaitility.await().until(() -> Map.of(BacklogQuotaType.message_age, backlogQuota2,
-                        BacklogQuotaType.destination_storage, backlogQuota1)
-                .equals(new TreeMap<>(pulsarAdmin.persistentTopics().getBacklogQuotaMap(tenant, namespace, topic, false,
-                        false, false))));
+        Awaitility.await().until(
+            () -> ImmutableMap.of(BacklogQuotaType.message_age, backlogQuota2, BacklogQuotaType.destination_storage,
+                backlogQuota1).equals(new TreeMap<>(
+                pulsarAdmin.persistentTopics().getBacklogQuotaMap(tenant, namespace, topic, false, false, false))));
         pulsarAdmin.persistentTopics().removeBacklogQuota(tenant, namespace, topic,
                 BacklogQuotaType.destination_storage, false, false);
-        Assertions.assertEquals(Map.of(BacklogQuotaType.message_age, backlogQuota2),
+        Assertions.assertEquals(ImmutableMap.of(BacklogQuotaType.message_age, backlogQuota2),
                 pulsarAdmin.persistentTopics().getBacklogQuotaMap(tenant, namespace, topic, false,
                         false, false));
         Assertions.assertEquals(0L, pulsarAdmin.persistentTopics().getBacklogSizeByMessageId(tenant, namespace,
