@@ -19,16 +19,16 @@ public class RandomUtil {
         return random.nextLong();
     }
 
-    public static long randomPositiveLong(){
-        return random.nextLong(0, Long.MAX_VALUE);
+    public static long randomPositiveLong() {
+        return Math.abs(random.nextLong());
     }
 
-    public static int randomPositiveInt(){
-        return random.nextInt(0, Integer.MAX_VALUE);
+    public static int randomPositiveInt() {
+        return random.nextInt(Integer.MAX_VALUE);
     }
 
-    public static int randomNegativeInt(){
-        return random.nextInt(Integer.MIN_VALUE, -1);
+    public static int randomNegativeInt() {
+        return -random.nextInt(Integer.MAX_VALUE);
     }
 
 }

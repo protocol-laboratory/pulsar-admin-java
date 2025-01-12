@@ -6,9 +6,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class NonPersistentTopicsTest {
 
@@ -25,8 +24,8 @@ public class NonPersistentTopicsTest {
         SERVER.start();
         pulsarAdmin = PulsarAdmin.builder().port(SERVER.getWebPort()).build();
         TenantInfo initialTenantInfo = (new TenantInfo.TenantInfoBuilder())
-                .adminRoles(new HashSet<>(0))
-                .allowedClusters(Set.of(CLUSTER_STANDALONE)).build();
+            .adminRoles(new HashSet<>(0))
+            .allowedClusters(new HashSet<>(Arrays.asList(CLUSTER_STANDALONE))).build();
         pulsarAdmin.tenants().createTenant(tenant, initialTenantInfo);
     }
 
@@ -41,20 +40,20 @@ public class NonPersistentTopicsTest {
         String topic = RandomUtil.randomString();
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
         pulsarAdmin.nonPersistentTopics().createPartitionedTopic(tenant, namespace, topic, 2, false);
-        Assertions.assertEquals(List.of(String.format("non-persistent://%s/%s/%s", tenant, namespace, topic)),
+        Assertions.assertEquals(Arrays.asList(String.format("non-persistent://%s/%s/%s", tenant, namespace, topic)),
                 pulsarAdmin.nonPersistentTopics().getPartitionedTopicList(tenant, namespace, false));
         Assertions.assertEquals(2, pulsarAdmin.nonPersistentTopics().getPartitionedMetadata(tenant, namespace,
                 topic, false, false).getPartitions());
         pulsarAdmin.nonPersistentTopics().updatePartitionedTopic(tenant, namespace, topic, false, false, false, 3);
-        Assertions.assertEquals(List.of(String.format("non-persistent://%s/%s/%s", tenant, namespace, topic)),
+        Assertions.assertEquals(Arrays.asList(String.format("non-persistent://%s/%s/%s", tenant, namespace, topic)),
                 pulsarAdmin.nonPersistentTopics().getPartitionedTopicList(tenant, namespace, false));
         Assertions.assertEquals(3, pulsarAdmin.nonPersistentTopics().getPartitionedMetadata(tenant, namespace,
                 topic, false, false).getPartitions());
         pulsarAdmin.nonPersistentTopics().deletePartitionedTopic(tenant, namespace, topic, false, false);
-        Assertions.assertEquals(List.of(),
+        Assertions.assertEquals(Arrays.asList(),
                 pulsarAdmin.nonPersistentTopics().getPartitionedTopicList(tenant, namespace, false));
         Assertions.assertEquals(
-                List.of(),
+                Arrays.asList(),
                 pulsarAdmin.nonPersistentTopics().getList(tenant, namespace, null, false));
     }
 
@@ -75,11 +74,11 @@ public class NonPersistentTopicsTest {
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
         pulsarAdmin.nonPersistentTopics().createNonPartitionedTopic(tenant, namespace, topic, false, null);
         Assertions.assertEquals(
-                List.of(String.format("non-persistent://%s/%s/%s", tenant, namespace, topic)),
+                Arrays.asList(String.format("non-persistent://%s/%s/%s", tenant, namespace, topic)),
                 pulsarAdmin.nonPersistentTopics().getList(tenant, namespace, null, false));
         pulsarAdmin.nonPersistentTopics().deleteTopic(tenant, namespace, topic, false, false);
         Assertions.assertEquals(
-                List.of(),
+                Arrays.asList(),
                 pulsarAdmin.nonPersistentTopics().getList(tenant, namespace, null, false));
     }
 

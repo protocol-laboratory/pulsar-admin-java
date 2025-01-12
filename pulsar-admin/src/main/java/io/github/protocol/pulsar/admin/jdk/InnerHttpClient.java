@@ -16,6 +16,7 @@ import io.github.protocol.pulsar.admin.common.JacksonService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class InnerHttpClient {
     private HttpResponse innerPost(String url, byte[] body, String... params)
         throws InterruptedException, ExecutionException {
         Map<String, List<String>> headers = new HashMap<>();
-        headers.put("Content-Type", List.of("application/json"));
+        headers.put("Content-Type", Arrays.asList("application/json"));
         HttpRequest request = new HttpRequest(concatUrlWithParams(url, params), HttpMethod.POST, headers, body);
         return client.send(request).get();
     }
@@ -82,7 +83,7 @@ public class InnerHttpClient {
     private HttpResponse innerPut(String url, byte[] body, String... params)
         throws InterruptedException, ExecutionException {
         Map<String, List<String>> headers = new HashMap<>();
-        headers.put("Content-Type", List.of("application/json"));
+        headers.put("Content-Type", Arrays.asList("application/json"));
         HttpRequest request = new HttpRequest(concatUrlWithParams(url, params), HttpMethod.PUT, headers, body);
         return client.send(request).get();
     }

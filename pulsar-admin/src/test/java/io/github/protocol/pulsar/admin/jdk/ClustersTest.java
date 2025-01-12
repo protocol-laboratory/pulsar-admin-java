@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class ClustersTest {
 
@@ -24,7 +24,7 @@ public class ClustersTest {
 
     @Test
     public void getClustersTest() throws PulsarAdminException {
-        Assertions.assertEquals(List.of("standalone"),
+        Assertions.assertEquals(Arrays.asList("standalone"),
                 PulsarAdmin.builder().port(SERVER.getWebPort()).build().clusters().getClusters());
     }
 

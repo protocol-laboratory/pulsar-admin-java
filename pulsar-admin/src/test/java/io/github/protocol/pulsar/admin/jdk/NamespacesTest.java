@@ -1,15 +1,14 @@
 package io.github.protocol.pulsar.admin.jdk;
 
+import com.google.common.collect.ImmutableMap;
 import io.github.embedded.pulsar.core.EmbeddedPulsarServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 public class NamespacesTest {
@@ -20,7 +19,7 @@ public class NamespacesTest {
 
     private static final TenantInfo initialTenantInfo = (new TenantInfo.TenantInfoBuilder())
             .adminRoles(new HashSet<>(0))
-            .allowedClusters(Set.of(CLUSTER_STANDALONE)).build();
+            .allowedClusters(new HashSet<>(Arrays.asList(CLUSTER_STANDALONE))).build();
 
     private static PulsarAdmin pulsarAdmin;
 
@@ -41,16 +40,16 @@ public class NamespacesTest {
         String namespace = RandomUtil.randomString();
         pulsarAdmin.tenants().createTenant(tenant, initialTenantInfo);
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
-        Assertions.assertEquals(List.of(), pulsarAdmin.namespaces()
-                .getTopics(tenant, namespace, Mode.PERSISTENT, true));
-        Assertions.assertEquals(List.of(), pulsarAdmin.namespaces()
+        Assertions.assertEquals(Arrays.asList(), pulsarAdmin.namespaces()
+                                                    .getTopics(tenant, namespace, Mode.PERSISTENT, true));
+        Assertions.assertEquals(Arrays.asList(), pulsarAdmin.namespaces()
                 .getTopics(tenant, namespace, Mode.NON_PERSISTENT, true));
-        Assertions.assertEquals(List.of(), pulsarAdmin.namespaces()
+        Assertions.assertEquals(Arrays.asList(), pulsarAdmin.namespaces()
                 .getTopics(tenant, namespace, Mode.ALL, false));
         Assertions.assertEquals(
-                List.of(tenant + "/" + namespace), pulsarAdmin.namespaces().getTenantNamespaces(tenant));
+            Arrays.asList(tenant + "/" + namespace), pulsarAdmin.namespaces().getTenantNamespaces(tenant));
         pulsarAdmin.namespaces().deleteNamespace(tenant, namespace, false, false);
-        Assertions.assertEquals(List.of(), pulsarAdmin.namespaces().getTenantNamespaces(tenant));
+        Assertions.assertEquals(Arrays.asList(), pulsarAdmin.namespaces().getTenantNamespaces(tenant));
     }
 
     @Test
@@ -72,18 +71,18 @@ public class NamespacesTest {
         pulsarAdmin.namespaces().setBacklogQuota(tenant, namespace, BacklogQuotaType.message_age, backlogQuota1);
         pulsarAdmin.namespaces().setBacklogQuota(tenant, namespace,
                 BacklogQuotaType.destination_storage, backlogQuota2);
-        Assertions.assertEquals(Map.of(
+        Assertions.assertEquals(ImmutableMap.of(
                         BacklogQuotaType.destination_storage, backlogQuota2,
                         BacklogQuotaType.message_age, backlogQuota1),
                 new TreeMap<>(pulsarAdmin.namespaces().getBacklogQuotaMap(tenant, namespace)));
         backlogQuota1.setPolicy(RetentionPolicy.producer_exception);
         pulsarAdmin.namespaces().setBacklogQuota(tenant, namespace, BacklogQuotaType.message_age, backlogQuota1);
-        Assertions.assertEquals(Map.of(
+        Assertions.assertEquals(ImmutableMap.of(
                         BacklogQuotaType.destination_storage, backlogQuota2,
                         BacklogQuotaType.message_age, backlogQuota1),
                 new TreeMap<>(pulsarAdmin.namespaces().getBacklogQuotaMap(tenant, namespace)));
         pulsarAdmin.namespaces().removeBacklogQuota(tenant, namespace, BacklogQuotaType.message_age);
-        Assertions.assertEquals(Map.of(BacklogQuotaType.destination_storage, backlogQuota2),
+        Assertions.assertEquals(ImmutableMap.of(BacklogQuotaType.destination_storage, backlogQuota2),
                 new TreeMap<>(pulsarAdmin.namespaces().getBacklogQuotaMap(tenant, namespace)));
     }
 

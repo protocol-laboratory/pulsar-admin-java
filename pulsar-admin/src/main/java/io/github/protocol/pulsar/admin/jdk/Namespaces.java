@@ -25,7 +25,7 @@ public class Namespaces {
                         String.format("failed to get namespaces of tenant %s, status code %s, body : %s",
                                 tenant, response.statusCode(), response.bodyAsString()));
             }
-            return JacksonService.toList(response.body(), new TypeReference<>() {
+            return JacksonService.toList(response.body(), new TypeReference<List<String>>() {
             });
         } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
@@ -43,7 +43,7 @@ public class Namespaces {
                         String.format("failed to get topics of namespace %s/%s, status code %s, body : %s",
                                 tenant, namespace, response.statusCode(), response.bodyAsString()));
             }
-            return JacksonService.toList(response.body(), new TypeReference<>() {
+            return JacksonService.toList(response.body(), new TypeReference<List<String>>() {
             });
         } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);
@@ -90,7 +90,7 @@ public class Namespaces {
                         "failed to get backlog quota map of namespace %s/%s, status code %s, body : %s",
                         tenant, namespace, response.statusCode(), response.bodyAsString()));
             }
-            return JacksonService.toRefer(response.body(), new TypeReference<>() {
+            return JacksonService.toRefer(response.body(), new TypeReference<Map<BacklogQuotaType, BacklogQuota>>() {
             });
         } catch (IOException | InterruptedException | ExecutionException e) {
             throw new PulsarAdminException(e);

@@ -1,4 +1,12 @@
 package io.github.protocol.pulsar.spring;
 
-public record NewTenant(String tenant) {
+import lombok.Getter;
+
+@Getter
+public class NewTenant {
+    String tenant;
+
+    public NewTenant(String tenant) {
+        this.tenant = tenant;
+    }
 }
