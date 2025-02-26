@@ -29,7 +29,7 @@ public class InnerHttpClient {
 
     public InnerHttpClient(Configuration conf) {
         HttpClientConfig.Builder clientConfigBuilder = new HttpClientConfig.Builder();
-        clientConfigBuilder.engine(HttpClientEngine.JAVA);
+        clientConfigBuilder.engine(HttpClientEngine.Java);
         if (conf.tlsEnabled) {
             TlsConfig.Builder tlsConfigBuilder = new TlsConfig.Builder();
             io.github.protocol.pulsar.admin.api.TlsConfig tlsConfig = conf.tlsConfig;
