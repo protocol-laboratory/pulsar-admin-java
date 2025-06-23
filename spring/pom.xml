@@ -5,8 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.protocol-laboratory</groupId>
-        <artifactId>pulsar-admin-parent</artifactId>
+        <artifactId>pulsar-admin-parent-dependencies</artifactId>
         <version>0.2.0</version>
+        <relativePath>../pulsar-admin-parent-dependencies</relativePath>
     </parent>
 
     <artifactId>pulsar-spring-parent</artifactId>
