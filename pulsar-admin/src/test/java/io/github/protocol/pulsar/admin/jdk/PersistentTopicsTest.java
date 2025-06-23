@@ -1,44 +1,34 @@
 package io.github.protocol.pulsar.admin.jdk;
 
 import com.google.common.collect.ImmutableMap;
-import io.github.embedded.pulsar.core.EmbeddedPulsarServer;
 import org.awaitility.Awaitility;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.TreeMap;
 
-public class PersistentTopicsTest {
-
-    private static final EmbeddedPulsarServer SERVER = new EmbeddedPulsarServer();
-
+public class PersistentTopicsTest extends BaseTest {
     private static final String CLUSTER_STANDALONE = "standalone";
 
     private static final String tenant = RandomUtil.randomString();
 
-    private static PulsarAdmin pulsarAdmin;
-
     @BeforeAll
-    public static void setup() throws Exception {
-        SERVER.start();
-        pulsarAdmin = PulsarAdmin.builder().port(SERVER.getWebPort()).build();
+    public void setup() throws Exception {
+        super.setup();
+        // create one tenant is enough
         TenantInfo initialTenantInfo = (new TenantInfo.TenantInfoBuilder())
             .adminRoles(new HashSet<>(0))
             .allowedClusters(new HashSet<>(Arrays.asList(CLUSTER_STANDALONE))).build();
-        pulsarAdmin.tenants().createTenant(tenant, initialTenantInfo);
+        pulsarAdmins.get(0).tenants().createTenant(tenant, initialTenantInfo);
     }
 
-    @AfterAll
-    public static void teardown() throws Exception {
-        SERVER.close();
-    }
-
-    @Test
-    public void partitionedTopicsTest() throws PulsarAdminException {
+    @ParameterizedTest
+    @MethodSource("providePulsarAdmins")
+    public void partitionedTopicsTest(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         String namespace = RandomUtil.randomString();
         String topic = RandomUtil.randomString();
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
@@ -70,8 +60,9 @@ public class PersistentTopicsTest {
 
     }
 
-    @Test
-    public void nonPartitionedTopicsTest() throws PulsarAdminException {
+    @ParameterizedTest
+    @MethodSource("providePulsarAdmins")
+    public void nonPartitionedTopicsTest(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         String namespace = RandomUtil.randomString();
         String topic = RandomUtil.randomString();
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
@@ -85,8 +76,9 @@ public class PersistentTopicsTest {
                 pulsarAdmin.persistentTopics().getList(tenant, namespace, null, false));
     }
 
-    @Test
-    public void createMissedPartitionsTest() throws PulsarAdminException {
+    @ParameterizedTest
+    @MethodSource("providePulsarAdmins")
+    public void createMissedPartitionsTest(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         String namespace = RandomUtil.randomString();
         String topic = RandomUtil.randomString();
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
@@ -106,8 +98,9 @@ public class PersistentTopicsTest {
                 pulsarAdmin.persistentTopics().getList(tenant, namespace, null, false));
     }
 
-    @Test
-    public void getLastMessageIdTest() throws PulsarAdminException {
+    @ParameterizedTest
+    @MethodSource("providePulsarAdmins")
+    public void getLastMessageIdTest(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         String namespace = RandomUtil.randomString();
         String topic = RandomUtil.randomString();
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
@@ -118,8 +111,9 @@ public class PersistentTopicsTest {
         Assertions.assertNotNull(pulsarAdmin.persistentTopics().getLastMessageId(tenant, namespace, topic, false));
     }
 
-    @Test
-    public void backLogQuotaTest() throws PulsarAdminException {
+    @ParameterizedTest
+    @MethodSource("providePulsarAdmins")
+    public void backLogQuotaTest(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         String namespace = RandomUtil.randomString();
         String topic = RandomUtil.randomString();
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
@@ -162,8 +156,9 @@ public class PersistentTopicsTest {
         Assertions.assertNotNull(pulsarAdmin.persistentTopics().getBacklog(tenant, namespace, topic, false));
     }
 
-    @Test
-    public void retentionTest() throws PulsarAdminException {
+    @ParameterizedTest
+    @MethodSource("providePulsarAdmins")
+    public void retentionTest(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         String namespace = RandomUtil.randomString();
         String topic = RandomUtil.randomString();
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
@@ -192,8 +187,9 @@ public class PersistentTopicsTest {
                 false, false, false));
     }
 
-    @Test
-    public void getPartitionedStatsTest() throws PulsarAdminException {
+    @ParameterizedTest
+    @MethodSource("providePulsarAdmins")
+    public void getPartitionedStatsTest(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         String namespace = RandomUtil.randomString();
         String topic = RandomUtil.randomString();
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);

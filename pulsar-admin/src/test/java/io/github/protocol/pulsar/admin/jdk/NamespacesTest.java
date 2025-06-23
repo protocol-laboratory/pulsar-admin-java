@@ -1,41 +1,24 @@
 package io.github.protocol.pulsar.admin.jdk;
 
 import com.google.common.collect.ImmutableMap;
-import io.github.embedded.pulsar.core.EmbeddedPulsarServer;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.TreeMap;
 
-public class NamespacesTest {
-
-    private static final EmbeddedPulsarServer SERVER = new EmbeddedPulsarServer();
-
+public class NamespacesTest extends BaseTest {
     private static final String CLUSTER_STANDALONE = "standalone";
 
     private static final TenantInfo initialTenantInfo = (new TenantInfo.TenantInfoBuilder())
             .adminRoles(new HashSet<>(0))
             .allowedClusters(new HashSet<>(Arrays.asList(CLUSTER_STANDALONE))).build();
 
-    private static PulsarAdmin pulsarAdmin;
-
-    @BeforeAll
-    public static void setup() throws Exception {
-        SERVER.start();
-        pulsarAdmin = PulsarAdmin.builder().port(SERVER.getWebPort()).build();
-    }
-
-    @AfterAll
-    public static void teardown() throws Exception {
-        SERVER.close();
-    }
-
-    @Test
-    public void namespaceTest() throws PulsarAdminException {
+    @ParameterizedTest
+    @MethodSource("providePulsarAdmins")
+    public void namespaceTest(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         String tenant = RandomUtil.randomString();
         String namespace = RandomUtil.randomString();
         pulsarAdmin.tenants().createTenant(tenant, initialTenantInfo);
@@ -52,8 +35,9 @@ public class NamespacesTest {
         Assertions.assertEquals(Arrays.asList(), pulsarAdmin.namespaces().getTenantNamespaces(tenant));
     }
 
-    @Test
-    public void namespacesBacklogQuotaTest() throws PulsarAdminException, InterruptedException {
+    @ParameterizedTest
+    @MethodSource("providePulsarAdmins")
+    public void namespacesBacklogQuotaTest(PulsarAdmin pulsarAdmin) throws PulsarAdminException, InterruptedException {
         String tenant = RandomUtil.randomString();
         String namespace = RandomUtil.randomString();
         pulsarAdmin.tenants().createTenant(tenant, initialTenantInfo);
@@ -86,8 +70,9 @@ public class NamespacesTest {
                 new TreeMap<>(pulsarAdmin.namespaces().getBacklogQuotaMap(tenant, namespace)));
     }
 
-    @Test
-    public void namespacesClearBacklogTest() throws PulsarAdminException {
+    @ParameterizedTest
+    @MethodSource("providePulsarAdmins")
+    public void namespacesClearBacklogTest(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         String tenant = RandomUtil.randomString();
         String namespace = RandomUtil.randomString();
         pulsarAdmin.tenants().createTenant(tenant, initialTenantInfo);
@@ -97,8 +82,9 @@ public class NamespacesTest {
                 tenant, namespace, RandomUtil.randomString(), false);
     }
 
-    @Test
-    public void namespacesRetentionTest() throws PulsarAdminException {
+    @ParameterizedTest
+    @MethodSource("providePulsarAdmins")
+    public void namespacesRetentionTest(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         String tenant = RandomUtil.randomString();
         String namespace = RandomUtil.randomString();
         pulsarAdmin.tenants().createTenant(tenant, initialTenantInfo);
@@ -113,8 +99,9 @@ public class NamespacesTest {
         Assertions.assertNull(pulsarAdmin.namespaces().getRetention(tenant, namespace));
     }
 
-    @Test
-    public void namespacesMessageTTLTest() throws PulsarAdminException {
+    @ParameterizedTest
+    @MethodSource("providePulsarAdmins")
+    public void namespacesMessageTTLTest(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         String tenant = RandomUtil.randomString();
         String namespace = RandomUtil.randomString();
         pulsarAdmin.tenants().createTenant(tenant, initialTenantInfo);
@@ -126,8 +113,9 @@ public class NamespacesTest {
         Assertions.assertNull(pulsarAdmin.namespaces().getNamespaceMessageTTL(tenant, namespace));
     }
 
-    @Test
-    public void namespacesCompactionThresholdTest() throws PulsarAdminException {
+    @ParameterizedTest
+    @MethodSource("providePulsarAdmins")
+    public void namespacesCompactionThresholdTest(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         String tenant = RandomUtil.randomString();
         String namespace = RandomUtil.randomString();
         pulsarAdmin.tenants().createTenant(tenant, initialTenantInfo);

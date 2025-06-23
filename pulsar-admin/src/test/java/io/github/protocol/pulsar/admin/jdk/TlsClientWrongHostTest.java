@@ -10,10 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
-public class TlsClientWrongHostTest {
-
-    private static EmbeddedPulsarServer server;
-
+public class TlsClientWrongHostTest extends BaseTest{
     private static final String CLIENT_KEYSTORE_FILE =
             TlsClientWrongHostTest.class.getClassLoader().getResource("pulsar_client_key_wrong_host.jks").getFile();
     private static final String CLIENT_TRUSTSTORE_FILE =
@@ -29,7 +26,7 @@ public class TlsClientWrongHostTest {
     private static final String SERVER_CERT_PASSWORD = "pulsar_server_pwd";
 
     @BeforeAll
-    public static void setup() throws Exception {
+    public void setup() throws Exception {
         EmbeddedPulsarConfig config = new EmbeddedPulsarConfig();
         config.enableTls(true);
         config.serverKeyStorePath(new File(SERVER_KEYSTORE_FILE).getAbsolutePath());
@@ -57,7 +54,7 @@ public class TlsClientWrongHostTest {
                 null
         );
         PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
-                .port(server.getWebPort())
+                .port(getPort())
                 .tlsEnabled(true)
                 .tlsConfig(tlsConfig)
                 .build();
@@ -65,7 +62,7 @@ public class TlsClientWrongHostTest {
     }
 
     @AfterAll
-    public static void teardown() throws Exception {
+    public void teardown() throws Exception {
         server.close();
     }
 }

@@ -10,5 +10,11 @@
     </parent>
 
     <artifactId>pulsar-admin-api</artifactId>
-
+    <dependencies>
+        <dependency>
+            <groupId>io.github.openfacade</groupId>
+            <artifactId>http-facade</artifactId>
+            <version>${http-facade.version}</version>
+        </dependency>
+    </dependencies>
 </project>
