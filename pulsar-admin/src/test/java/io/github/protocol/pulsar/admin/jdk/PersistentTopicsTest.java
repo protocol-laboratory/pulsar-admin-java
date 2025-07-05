@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.TreeMap;
 
 public class PersistentTopicsTest {
@@ -198,7 +199,34 @@ public class PersistentTopicsTest {
         String topic = RandomUtil.randomString();
         pulsarAdmin.namespaces().createNamespace(tenant, namespace);
         pulsarAdmin.persistentTopics().createPartitionedTopic(tenant, namespace, topic, 2, false);
-        Assertions.assertNotNull(pulsarAdmin.persistentTopics().getPartitionedStats(tenant, namespace, topic, false));
+        Assertions.assertNotNull(pulsarAdmin.persistentTopics().getPartitionedStats(tenant, namespace,
+                topic, false));
     }
 
+    @Test
+    public void subscriptionTest() throws PulsarAdminException {
+        String namespace = RandomUtil.randomString();
+        String topic = RandomUtil.randomString();
+        String subscriptionNameLatest = RandomUtil.randomString();
+        String subscriptionNameEarliest = RandomUtil.randomString();
+
+        // Create namespace and topic
+        pulsarAdmin.namespaces().createNamespace(tenant, namespace);
+        pulsarAdmin.persistentTopics().createNonPartitionedTopic(tenant, namespace, topic, false, null);
+
+        // Create subscription with message ID latest and earliest
+         pulsarAdmin.persistentTopics().createSubscription(
+                tenant, namespace, topic, subscriptionNameLatest, false, false, SubscriptionMessageId.latest());
+        pulsarAdmin.persistentTopics().createSubscription(
+            tenant, namespace, topic, subscriptionNameEarliest, false, false, SubscriptionMessageId.earliest());
+
+        // Verify subscription was created
+        List<String> subscriptions = pulsarAdmin.persistentTopics().getSubscriptions(tenant, namespace, topic, false);
+        Assertions.assertTrue(subscriptions.contains(subscriptionNameEarliest), "Should contain subscription created with message ID");
+        Assertions.assertTrue(subscriptions.contains(subscriptionNameLatest), "Should contain subscription created with message ID");
+
+        // Clean up
+        pulsarAdmin.persistentTopics().deleteSubscription(tenant, namespace, topic, subscriptionNameEarliest, false, false);
+        pulsarAdmin.persistentTopics().deleteSubscription(tenant, namespace, topic, subscriptionNameLatest, false, false);
+    }
 }
