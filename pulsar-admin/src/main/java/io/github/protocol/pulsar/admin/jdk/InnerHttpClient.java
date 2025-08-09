@@ -2,14 +2,11 @@ package io.github.protocol.pulsar.admin.jdk;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.openfacade.http.HttpClient;
-import io.github.openfacade.http.HttpClientConfig;
-import io.github.openfacade.http.HttpClientEngine;
 import io.github.openfacade.http.HttpClientFactory;
 import io.github.openfacade.http.HttpMethod;
 import io.github.openfacade.http.HttpRequest;
 import io.github.openfacade.http.HttpResponse;
 import io.github.openfacade.http.HttpSchema;
-import io.github.openfacade.http.TlsConfig;
 import io.github.openfacade.http.UrlBuilder;
 import io.github.protocol.pulsar.admin.api.Configuration;
 import io.github.protocol.pulsar.admin.common.JacksonService;
@@ -28,21 +25,15 @@ public class InnerHttpClient {
     private UrlBuilder templateUrlBuilder;
 
     public InnerHttpClient(Configuration conf) {
-        HttpClientConfig.Builder clientConfigBuilder = new HttpClientConfig.Builder();
-        clientConfigBuilder.engine(conf.engine == null ? HttpClientEngine.Java : conf.engine);
-        if (conf.tlsEnabled) {
-            TlsConfig.Builder tlsConfigBuilder = new TlsConfig.Builder();
-            io.github.protocol.pulsar.admin.api.TlsConfig tlsConfig = conf.tlsConfig;
-            tlsConfigBuilder.cipherSuites(tlsConfig.cipherSuites);
-            tlsConfigBuilder.hostnameVerifyDisabled(tlsConfig.hostnameVerifyDisabled);
-            tlsConfigBuilder.keyStore(tlsConfig.keyStorePath, tlsConfig.keyStorePassword);
-            tlsConfigBuilder.trustStore(tlsConfig.trustStorePath, tlsConfig.trustStorePassword);
-            tlsConfigBuilder.verifyDisabled(tlsConfig.verifyDisabled);
-            clientConfigBuilder.tlsConfig(tlsConfigBuilder.build());
+        boolean tlsEnable;
+        if (conf.httpClientConfig == null || conf.httpClientConfig.tlsConfig() == null) {
+            tlsEnable = false;
+        } else {
+            tlsEnable = true;
         }
-        this.client = HttpClientFactory.createHttpClient(clientConfigBuilder.build());
+        this.client = HttpClientFactory.createHttpClient(conf.httpClientConfig);
         templateUrlBuilder = new UrlBuilder();
-        templateUrlBuilder.setHttpSchema(conf.tlsEnabled ? HttpSchema.HTTPS : HttpSchema.HTTP).setHost(conf.host)
+        templateUrlBuilder.setHttpSchema(tlsEnable ? HttpSchema.HTTPS : HttpSchema.HTTP).setHost(conf.host)
                           .setPort(conf.port);
     }
 

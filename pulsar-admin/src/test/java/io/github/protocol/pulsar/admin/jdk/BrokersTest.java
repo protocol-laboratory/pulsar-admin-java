@@ -1,18 +1,19 @@
 package io.github.protocol.pulsar.admin.jdk;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class BrokersTest extends BaseTest{
 
-    @Test
-    public void testHealthCheckV1() throws PulsarAdminException {
-        PulsarAdmin pulsarAdmin = PulsarAdmin.builder().port(getPort()).build();
+    @MethodSource("providePulsarAdmins")
+    @ParameterizedTest
+    public void testHealthCheckV1(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
 
-    @Test
-    public void testHealthCheckV2() throws PulsarAdminException {
-        PulsarAdmin pulsarAdmin = PulsarAdmin.builder().port(getPort()).build();
+    @MethodSource("providePulsarAdmins")
+    @ParameterizedTest
+    public void testHealthCheckV2(PulsarAdmin pulsarAdmin) throws PulsarAdminException {
         pulsarAdmin.brokers().healthcheck(TopicVersion.V2);
     }
 }

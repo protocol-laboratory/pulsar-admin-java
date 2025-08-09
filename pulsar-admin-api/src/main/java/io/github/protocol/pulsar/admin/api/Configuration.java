@@ -1,17 +1,16 @@
 package io.github.protocol.pulsar.admin.api;
 
-import io.github.openfacade.http.HttpClientEngine;
+import io.github.openfacade.http.HttpClientConfig;
+import io.github.openfacade.http.ReactorHttpClientConfig;
 
 public class Configuration {
     public String host = "localhost";
 
     public int port;
 
-    public boolean tlsEnabled;
+    public HttpClientConfig httpClientConfig;
 
-    public TlsConfig tlsConfig;
-
-    public HttpClientEngine engine;
+    public ReactorHttpClientConfig reactorHttpClientConfig;
 
     public Configuration() {
     }
@@ -26,18 +25,13 @@ public class Configuration {
         return this;
     }
 
-    public Configuration tlsEnabled(boolean tlsEnabled) {
-        this.tlsEnabled = tlsEnabled;
+    public Configuration httpClientConfig(HttpClientConfig httpClientConfig) {
+        this.httpClientConfig = httpClientConfig;
         return this;
     }
 
-    public Configuration tlsConfig(TlsConfig tlsConfig) {
-        this.tlsConfig = tlsConfig;
-        return this;
-    }
-
-    public Configuration engine(HttpClientEngine engine) {
-        this.engine = engine;
+    public Configuration reactorHttpClientConfig(ReactorHttpClientConfig reactorHttpClientConfig) {
+        this.reactorHttpClientConfig = reactorHttpClientConfig;
         return this;
     }
 }

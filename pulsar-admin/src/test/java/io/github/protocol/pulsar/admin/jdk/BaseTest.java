@@ -1,8 +1,8 @@
 package io.github.protocol.pulsar.admin.jdk;
 
 import io.github.embedded.pulsar.core.EmbeddedPulsarServer;
+import io.github.openfacade.http.HttpClientConfig;
 import io.github.openfacade.http.HttpClientEngine;
-import io.github.protocol.pulsar.admin.api.Configuration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
@@ -40,12 +40,13 @@ public class BaseTest {
             if (engine.equals(HttpClientEngine.Async) || engine.equals(HttpClientEngine.Jetty)) {
                 continue;
             }
-            Configuration conf = new Configuration();
-            conf.host("localhost");
-            conf.port(getPort());
-            conf.engine(engine);
-            PulsarAdminImpl pulsarAdmin = new PulsarAdminImpl(conf);
-            pulsarAdmins.add(pulsarAdmin);
+            PulsarAdminBuilder pulsarAdminBuilder = PulsarAdmin.builder();
+            pulsarAdminBuilder.host("localhost");
+            pulsarAdminBuilder.port(getPort());
+            HttpClientConfig.Builder clientBuilder = new HttpClientConfig.Builder();
+            clientBuilder.engine(engine);
+            pulsarAdminBuilder.httpClientConfig(clientBuilder.build());
+            pulsarAdmins.add(pulsarAdminBuilder.build());
         }
         return pulsarAdmins;
     }
