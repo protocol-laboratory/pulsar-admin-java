@@ -2,7 +2,8 @@ package io.github.protocol.pulsar.admin.jdk;
 
 import io.github.embedded.pulsar.core.EmbeddedPulsarConfig;
 import io.github.embedded.pulsar.core.EmbeddedPulsarServer;
-import io.github.protocol.pulsar.admin.api.TlsConfig;
+import io.github.openfacade.http.HttpClientConfig;
+import io.github.openfacade.http.TlsConfig;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -41,92 +42,113 @@ public class TlsClientTest extends BaseTest {
     }
 
     private PulsarAdmin createPulsarAdmin(TlsConfig tlsConfig) throws PulsarAdminException {
+        HttpClientConfig.Builder builder = new HttpClientConfig.Builder();
+        builder.tlsConfig(tlsConfig);
         return PulsarAdmin.builder()
-                .port(getPort())
-                .tlsEnabled(true)
-                .tlsConfig(tlsConfig)
-                .build();
+                          .port(getPort())
+                          .httpClientConfig(builder.build())
+                          .build();
     }
 
     @Test
     public void testTlsNoVerify() throws PulsarAdminException {
-        TlsConfig tlsConfig = new TlsConfig(
-                new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
-                CLIENT_CERT_PASSWORD.toCharArray(),
-                new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
-                CLIENT_CERT_PASSWORD.toCharArray(),
-                false,
-                true,
-                null,
-                null
-        );
-        PulsarAdmin pulsarAdmin = createPulsarAdmin(tlsConfig);
+        TlsConfig.Builder builder = new TlsConfig.Builder();
+        builder.verifyDisabled(false);
+        builder.hostnameVerifyDisabled(true);
+        builder.versions(null);
+        builder.cipherSuites(null);
+        builder.keyStore(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
+            CLIENT_CERT_PASSWORD.toCharArray());
+        builder.trustStore(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
+            CLIENT_CERT_PASSWORD.toCharArray());
+        HttpClientConfig.Builder clientConfigBuilder = new HttpClientConfig.Builder();
+        clientConfigBuilder.tlsConfig(builder.build());
+        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
+                .port(getPort())
+            .httpClientConfig(clientConfigBuilder.build())
+                .build();
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
 
     @Test
     public void testTlsCustomProtocol() throws PulsarAdminException {
-        TlsConfig tlsConfig = new TlsConfig(
-                new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
-                CLIENT_CERT_PASSWORD.toCharArray(),
-                new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
-                CLIENT_CERT_PASSWORD.toCharArray(),
-                false,
-                true,
-                new String[]{"TLSv1.2"},
-                null
-        );
-        PulsarAdmin pulsarAdmin = createPulsarAdmin(tlsConfig);
+        TlsConfig.Builder builder = new TlsConfig.Builder();
+        builder.verifyDisabled(false);
+        builder.hostnameVerifyDisabled(true);
+        builder.versions(new String[]{"TLSv1.2"});
+        builder.cipherSuites(null);
+        builder.keyStore(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
+            CLIENT_CERT_PASSWORD.toCharArray());
+        builder.trustStore(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
+            CLIENT_CERT_PASSWORD.toCharArray());
+        HttpClientConfig.Builder clientConfigBuilder = new HttpClientConfig.Builder();
+        clientConfigBuilder.tlsConfig(builder.build());
+        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
+                .port(getPort())
+                .httpClientConfig(clientConfigBuilder.build())
+                .build();
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
 
     @Test
     public void testTlsCustomCiphers() throws PulsarAdminException {
-        TlsConfig tlsConfig = new TlsConfig(
-                new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
-                CLIENT_CERT_PASSWORD.toCharArray(),
-                new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
-                CLIENT_CERT_PASSWORD.toCharArray(),
-                false,
-                true,
-                null,
-                new String[]{"ECDHE-ECDSA-AES128-GCM-SHA256", "ECDHE-RSA-AES128-GCM-SHA256",
+        TlsConfig.Builder builder = new TlsConfig.Builder();
+        builder.verifyDisabled(false);
+        builder.hostnameVerifyDisabled(true);
+        builder.versions(null);
+        builder.cipherSuites(new String[]{"ECDHE-ECDSA-AES128-GCM-SHA256", "ECDHE-RSA-AES128-GCM-SHA256",
                         "ECDHE-ECDSA-AES256-GCM-SHA384", "ECDHE-RSA-AES256-GCM-SHA384", "ECDHE-ECDSA-CHACHA20-POLY1305",
-                        "ECDHE-RSA-CHACHA20-POLY1305", "DHE-RSA-AES128-GCM-SHA256", "DHE-RSA-AES256-GCM-SHA384"}
-        );
-        PulsarAdmin pulsarAdmin = createPulsarAdmin(tlsConfig);
+                        "ECDHE-RSA-CHACHA20-POLY1305", "DHE-RSA-AES128-GCM-SHA256", "DHE-RSA-AES256-GCM-SHA384"});
+        builder.keyStore(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
+            CLIENT_CERT_PASSWORD.toCharArray());
+        builder.trustStore(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
+            CLIENT_CERT_PASSWORD.toCharArray());
+        HttpClientConfig.Builder clientConfigBuilder = new HttpClientConfig.Builder();
+        clientConfigBuilder.tlsConfig(builder.build());
+        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
+                .port(getPort())
+                .httpClientConfig(clientConfigBuilder.build())
+                .build();
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
 
     @Test
     public void testTlsByVerifyAndNoHostnameVerification() throws PulsarAdminException {
-        TlsConfig tlsConfig = new TlsConfig(
-                new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
-                CLIENT_CERT_PASSWORD.toCharArray(),
-                new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
-                CLIENT_CERT_PASSWORD.toCharArray(),
-                true,
-                false,
-                null,
-                null
-        );
-        PulsarAdmin pulsarAdmin = createPulsarAdmin(tlsConfig);
+        TlsConfig.Builder builder = new TlsConfig.Builder();
+        builder.verifyDisabled(true);
+        builder.hostnameVerifyDisabled(false);
+        builder.versions(null);
+        builder.cipherSuites(null);
+        builder.keyStore(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
+            CLIENT_CERT_PASSWORD.toCharArray());
+        builder.trustStore(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
+            CLIENT_CERT_PASSWORD.toCharArray());
+        HttpClientConfig.Builder clientConfigBuilder = new HttpClientConfig.Builder();
+        clientConfigBuilder.tlsConfig(builder.build());
+        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
+                .port(getPort())
+                .httpClientConfig(clientConfigBuilder.build())
+                .build();
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
 
     @Test
     public void testTlsByVerifyAndHostnameVerification() throws PulsarAdminException {
-        TlsConfig tlsConfig = new TlsConfig(
-                new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
-                CLIENT_CERT_PASSWORD.toCharArray(),
-                new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
-                CLIENT_CERT_PASSWORD.toCharArray(),
-                true,
-                true,
-                null,
-                null
-        );
-        PulsarAdmin pulsarAdmin = createPulsarAdmin(tlsConfig);
+        TlsConfig.Builder builder = new TlsConfig.Builder();
+        builder.verifyDisabled(true);
+        builder.hostnameVerifyDisabled(true);
+        builder.versions(null);
+        builder.cipherSuites(null);
+        builder.keyStore(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
+            CLIENT_CERT_PASSWORD.toCharArray());
+        builder.trustStore(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
+            CLIENT_CERT_PASSWORD.toCharArray());
+        HttpClientConfig.Builder clientConfigBuilder = new HttpClientConfig.Builder();
+        clientConfigBuilder.tlsConfig(builder.build());
+        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
+                .port(getPort())
+                .httpClientConfig(clientConfigBuilder.build())
+                .build();
         pulsarAdmin.brokers().healthcheck(TopicVersion.V1);
     }
 

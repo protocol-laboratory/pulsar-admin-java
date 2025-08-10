@@ -1,6 +1,6 @@
 package io.github.protocol.pulsar.admin.reactive;
 
-import io.github.protocol.pulsar.admin.api.TlsConfig;
+import io.github.openfacade.http.TlsConfig;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
@@ -17,23 +17,23 @@ public class SslContextUtil {
         try {
             SslContextBuilder sslContextBuilder = SslContextBuilder.forClient();
 
-            if (config.keyStorePath != null && config.keyStorePassword != null) {
+            if (config.keyStorePath() != null && config.keyStorePassword() != null) {
                 KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-                try (FileInputStream keyStoreInputStream = new FileInputStream(config.keyStorePath)) {
-                    keyStore.load(keyStoreInputStream, config.keyStorePassword);
+                try (FileInputStream keyStoreInputStream = new FileInputStream(config.keyStorePath())) {
+                    keyStore.load(keyStoreInputStream, config.keyStorePassword());
                 }
                 String defaultKeyAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
                 KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(defaultKeyAlgorithm);
-                keyManagerFactory.init(keyStore, config.keyStorePassword);
+                keyManagerFactory.init(keyStore, config.keyStorePassword());
                 sslContextBuilder.keyManager(keyManagerFactory);
             }
 
-            if (config.verifyDisabled) {
+            if (config.verifyDisabled()) {
                 sslContextBuilder.trustManager(InsecureTrustManagerFactory.INSTANCE);
-            } else if (config.trustStorePath != null && config.trustStorePassword != null) {
+            } else if (config.trustStorePath() != null && config.trustStorePassword() != null) {
                 KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-                try (FileInputStream trustStoreInputStream = new FileInputStream(config.trustStorePath)) {
-                    trustStore.load(trustStoreInputStream, config.trustStorePassword);
+                try (FileInputStream trustStoreInputStream = new FileInputStream(config.trustStorePath())) {
+                    trustStore.load(trustStoreInputStream, config.trustStorePassword());
                 }
                 String defaultTrustAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
                 TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(defaultTrustAlgorithm);
@@ -41,12 +41,12 @@ public class SslContextUtil {
                 sslContextBuilder.trustManager(trustManagerFactory);
             }
 
-            if (config.versions != null) {
-                sslContextBuilder.protocols(config.versions);
+            if (config.versions() != null) {
+                sslContextBuilder.protocols(config.versions());
             }
 
-            if (config.cipherSuites != null) {
-                sslContextBuilder.ciphers(Arrays.asList(config.cipherSuites));
+            if (config.cipherSuites() != null) {
+                sslContextBuilder.ciphers(Arrays.asList(config.cipherSuites()));
             }
 
             return sslContextBuilder.build();

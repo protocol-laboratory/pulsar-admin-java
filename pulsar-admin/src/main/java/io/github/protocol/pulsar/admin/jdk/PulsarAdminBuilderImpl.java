@@ -1,7 +1,8 @@
 package io.github.protocol.pulsar.admin.jdk;
 
+import io.github.openfacade.http.HttpClientConfig;
+import io.github.openfacade.http.ReactorHttpClientConfig;
 import io.github.protocol.pulsar.admin.api.Configuration;
-import io.github.protocol.pulsar.admin.api.TlsConfig;
 
 public class PulsarAdminBuilderImpl implements PulsarAdminBuilder {
     private final Configuration conf;
@@ -28,14 +29,14 @@ public class PulsarAdminBuilderImpl implements PulsarAdminBuilder {
     }
 
     @Override
-    public PulsarAdminBuilder tlsEnabled(boolean useSsl) {
-        this.conf.tlsEnabled(useSsl);
+    public PulsarAdminBuilder httpClientConfig(HttpClientConfig httpClientConfig) {
+        this.conf.httpClientConfig(httpClientConfig);
         return this;
     }
 
     @Override
-    public PulsarAdminBuilder tlsConfig(TlsConfig tlsConfig) {
-        this.conf.tlsConfig(tlsConfig);
+    public PulsarAdminBuilder reactorHttpClientConfig(ReactorHttpClientConfig reactorHttpClientConfig) {
+        this.conf.reactorHttpClientConfig(reactorHttpClientConfig);
         return this;
     }
 }

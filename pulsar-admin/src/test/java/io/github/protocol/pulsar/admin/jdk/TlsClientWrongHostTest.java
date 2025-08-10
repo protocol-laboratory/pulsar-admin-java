@@ -2,7 +2,8 @@ package io.github.protocol.pulsar.admin.jdk;
 
 import io.github.embedded.pulsar.core.EmbeddedPulsarConfig;
 import io.github.embedded.pulsar.core.EmbeddedPulsarServer;
-import io.github.protocol.pulsar.admin.api.TlsConfig;
+import io.github.openfacade.http.HttpClientConfig;
+import io.github.openfacade.http.TlsConfig;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -42,22 +43,22 @@ public class TlsClientWrongHostTest extends BaseTest{
     }
 
     @Test
-    public void testTlsByVerifyAndNoHostnameVerification() throws PulsarAdminException {
-        TlsConfig tlsConfig = new TlsConfig(
-                new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
-                CLIENT_CERT_PASSWORD.toCharArray(),
-                new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
-                CLIENT_CERT_PASSWORD.toCharArray(),
-                false,
-                false,
-                null,
-                null
-        );
+    public void testTlsByVerifyAndNoHostnameVerification() {
+        TlsConfig.Builder builder = new TlsConfig.Builder();
+        builder.verifyDisabled(true);
+        builder.hostnameVerifyDisabled(false);
+        builder.versions(null);
+        builder.cipherSuites(null);
+        builder.keyStore(new File(CLIENT_KEYSTORE_FILE).getAbsolutePath(),
+            CLIENT_CERT_PASSWORD.toCharArray());
+        builder.trustStore(new File(CLIENT_TRUSTSTORE_FILE).getAbsolutePath(),
+            CLIENT_CERT_PASSWORD.toCharArray());
+        HttpClientConfig.Builder clientConfigBuilder = new HttpClientConfig.Builder();
+        clientConfigBuilder.tlsConfig(builder.build());
         PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
-                .port(getPort())
-                .tlsEnabled(true)
-                .tlsConfig(tlsConfig)
-                .build();
+                                             .port(getPort())
+                                             .httpClientConfig(clientConfigBuilder.build())
+                                             .build();
         Assertions.assertThrows(PulsarAdminException.class, () -> pulsarAdmin.brokers().healthcheck(TopicVersion.V1));
     }
 
